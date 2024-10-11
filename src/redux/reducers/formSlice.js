@@ -1,3 +1,6 @@
+import {createSlice} from '@reduxjs/toolkit';
+
+
 const initialState = {
     formData: {
       admissao: '',
@@ -19,24 +22,22 @@ const initialState = {
     invalidFields: []
   };
   
-  const formReducer = (state = initialState, action) => {
-    switch (action.type) {
-      case 'SET_FORM_DATA':
+  const formSlice = createSlice({
+    name: 'form',
+    initialState: {
+      numeroProcesso: '',
+      nomeEscritorio: '',
+      // Adicione mais campos conforme necessário
+    },
+    reducers: {
+      setFormData: (state, action) => {
         return {
           ...state,
-          formData: {
-            ...state.formData,
-            ...action.payload
-          }
+          ...action.payload,
         };
-      case 'SET_INVALID_FIELDS':
-        return {
-          ...state,
-          invalidFields: action.payload
-        };
-      default:
-        return state;
-    }
-  };
+      },
+    },
+  });
   
-  export default formReducer;
+  export const { setFormData } = formSlice.actions;
+  export default formSlice.reducer;

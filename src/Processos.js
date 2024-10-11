@@ -14,7 +14,6 @@ const ConsultarProcesso = () => {
     const [selectedPedidos, setSelectedPedidos] = useState([]);
     const [errorMessage, setErrorMessage] = useState('');
     const [isValidResponse, setIsValidResponse] = useState(false); // Estado para a resposta da API
-    const apiBaseUrl = 'http://localhost:8080/api/';
 
     const [formData, setFormData] = useState({
         numeroProcesso: '',
@@ -31,20 +30,12 @@ const ConsultarProcesso = () => {
         tribunalOrigem: '',
         valorCausa: 0,
         dataAjuizamento: '',
-        // Outros campos...
     });
 
     const toCamelCase = (str) => {
         return str.replace(/_([a-z])/g, (match, letter) => letter.toUpperCase());
     };
 
-    const convertKeysToCamelCase = (obj) => {
-        return Object.keys(obj).reduce((acc, key) => {
-            const camelCaseKey = toCamelCase(key);
-            acc[camelCaseKey] = obj[key];
-            return acc;
-        }, {});
-    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -61,33 +52,38 @@ const ConsultarProcesso = () => {
             selectedItems = [];
         }
         const mappedItems = selectedItems.map(item => ({
-            tipoPedido: item.id 
+            tipoPedido: item.id
         }));
 
         setSelectedPedidos(mappedItems);
     };
     const handleLookupResponse = (response) => {
-        if (response && response.numeroProcesso) {
-            setIsValidResponse(true);
-            setFormData(prevFormData => ({
-                ...prevFormData,
-                numeroProcesso: response.numeroProcesso || '',
-                nomeEscritorio: response.escritorio || '',
-                faseProcessual: response.faseProcessual || '',
-                autor: response.autor || '',
-                reu: response.reu || '',
-                reclamada: response.reclamada || '',
-                estado: response.estado || '',
-                cidade: response.cidadeOrigem || '',
-                natureza: response.natureza || '',
-                tipoAcao: response.tipoAcao || '',
-                funcao: response.funcao || '',
-                tribunalOrigem: response.tribunal || '',
-                valorCausa: response.valorCausa || 0,
-                dataAjuizamento: response.dataAjuizamento || '',
-            }));
+        if (response) { // Verifica se response não é nulo
+            if (response.numeroProcesso) {
+                setIsValidResponse(true);
+                setFormData(prevFormData => ({
+                    ...prevFormData,
+                    numeroProcesso: response.numeroProcesso || '',
+                    nomeEscritorio: response.escritorio || '',
+                    faseProcessual: response.faseProcessual || '',
+                    autor: response.autor || '',
+                    reu: response.reu || '',
+                    reclamada: response.reclamada || '',
+                    estado: response.estado || '',
+                    cidade: response.cidadeOrigem || '',
+                    natureza: response.natureza || '',
+                    tipoAcao: response.tipoAcao || '',
+                    funcao: response.funcao || '',
+                    tribunalOrigem: response.tribunal || '',
+                    valorCausa: response.valorCausa || 0,
+                    dataAjuizamento: response.dataAjuizamento || '',
+                }));
+            } else {
+                setErrorMessage("Processo não encontrado ou dados inválidos.");
+                setIsValidResponse(false);
+            }
         } else {
-            setErrorMessage("Processo não encontrado ou dados inválidos.");
+            setErrorMessage("Resposta da API inválida.");
             setIsValidResponse(false);
         }
     };
@@ -113,7 +109,7 @@ const ConsultarProcesso = () => {
                         onChange={setFormData}
                         first small form={formData}
                         invalidFields={invalidFields}
-                        onResponse={handleLookupResponse} 
+                        onResponse={handleLookupResponse}
                     />
                 </F.InputLine>
 
@@ -133,7 +129,7 @@ const ConsultarProcesso = () => {
                         fieldName="numeroProcesso"
                         formData={formData}
                         setFormData={setFormData}
-                        value={formData.numeroProcesso || ""}
+                        // value={formData.numeroProcesso || ""}
                         invalidFields={invalidFields}
                     />
                     <SelectRest
@@ -149,7 +145,7 @@ const ConsultarProcesso = () => {
 
                 <F.InputLine topless>
                     <Input
-                        label="Autor" first imgW
+                        label="Autor" first medium 
                         fieldName="autor"
                         formData={formData}
                         setFormData={setFormData}
@@ -173,7 +169,7 @@ const ConsultarProcesso = () => {
             <F.InputLine>
                 <SelectRest
                     label="Vara"
-                    first small route='vara'
+                    first medium route='vara'
                     id='idVara'
                     name='vara'
                     onChange={setFormData}
@@ -207,7 +203,7 @@ const ConsultarProcesso = () => {
                 <F.SmallInputLine>
                     <SelectRest
                         label="Natureza"
-                        first route='natureza'
+                        first medium route='natureza'
                         id='idNatureza'
                         name='natureza'
                         onChange={setFormData}
@@ -252,11 +248,19 @@ const ConsultarProcesso = () => {
             </F.InputLine>
 
             <F.InputLine>
-                <EstadoCidadeInput
-                    label="Estado"
-                    first
-                    formData={formData}
-                    setFormData={setFormData}
+                <Input
+                  label="Estado"
+                  first small fieldName="estado"
+                  formData={formData}
+                  setFormData={setFormData}
+                  invalidFields={invalidFields}
+                />
+                <Input
+                  label="Cidade"
+                  medium fieldName="cidadeOrigem"
+                  formData={formData}
+                  setFormData={setFormData}
+                  invalidFields={invalidFields}
                 />
             </F.InputLine>
 
@@ -353,7 +357,6 @@ const ConsultarProcesso = () => {
 
             {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>} {/* Exibir mensagem de erro */}
 
-            <button type="submit">Cadastrar Processo</button>
         </form>
     );
 };

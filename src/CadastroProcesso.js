@@ -133,7 +133,7 @@ const handleSubmit = async (e) => {
 
         <F.InputLine topless>
           <Input
-            label="Autor" first imgW
+            label="Autor" first medium
             fieldName="autor"
             formData={formData}
             setFormData={setFormData}
@@ -157,7 +157,7 @@ const handleSubmit = async (e) => {
       <F.InputLine>
         <SelectRest
           label="Vara"
-          first small route='vara'
+          first medium route='vara'
           id='idVara'
           name='vara'
           onChange={setFormData}
@@ -167,7 +167,7 @@ const handleSubmit = async (e) => {
         />
         <SelectRest
           label="Classificação de Risco"
-          route='classificacaoRisco'
+          medium route='classificacaoRisco'
           id='idClassificacaoRisco'
           name='classificacaoRisco'
           onChange={setFormData}

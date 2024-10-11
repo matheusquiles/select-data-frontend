@@ -75,9 +75,6 @@ const Frame = ({ children }) => {
         <F.Content>
           {activeComponent || children}
         </F.Content>
-        <F.Footer>
-          <p>© 2024 Shopia Softwares</p>
-        </F.Footer>
       </div>
     </F.FrameWrapper>
   );

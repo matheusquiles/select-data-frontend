@@ -1,11 +1,11 @@
-import { createStore, combineReducers } from 'redux';
-import formReducer from './reducers/formReducer'; // Importar o reducer
+import { configureStore } from '@reduxjs/toolkit';
+import formSlice from './reducers/formSlice'; 
 
-const rootReducer = combineReducers({
-  form: formReducer, // Adicionar o reducer ao rootReducer
-  // Adicione outros reducers aqui
+const store = configureStore({
+  reducer: {
+    form: formSlice,
+  },
 });
 
-const store = createStore(rootReducer);
 
 export default store;

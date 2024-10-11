@@ -5,7 +5,7 @@ import { GenericP } from '../styles/globalstyles';
 import { API_BASE_URL } from '../helpers/constants';
 import PropTypes from 'prop-types';
 
-export default function SelectRest({ label, first, topless, imgW, small, route, id, name, onChange, form, defaultValue, invalidFields }) {
+export default function SelectRest({ label, first, medium, topless, imgW, small, route, id, name, onChange, form, defaultValue, invalidFields }) {
   const [isLoading, setIsLoading] = useState(true);
   const [options, setOptions] = useState([]);
   const [selected, setSelected] = useState(defaultValue || '');
@@ -41,7 +41,7 @@ export default function SelectRest({ label, first, topless, imgW, small, route, 
     isLoading
     ? <p>Carregando...</p>
     : (
-      <InputLabel first={first} topless={topless} imgW={imgW} small={small} style={{ borderColor: isInvalid ? 'red' : 'inherit' }}>
+      <InputLabel first={first} medium={medium} topless={topless} imgW={imgW} small={small} style={{ borderColor: isInvalid ? 'red' : 'inherit' }}>
         <GenericP>{label}:</GenericP>
         <StyledSelect onChange={handleSelect} value={selected} style={{ borderColor: isInvalid ? 'red' : 'inherit' }}>
           <option value="">{`Selecione`}</option> {/* Opção padrão em branco */}

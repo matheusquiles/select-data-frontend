@@ -3,7 +3,7 @@ import { InputLabel, Input } from '../styles/formulario';
 import { GenericP } from '../styles/globalstyles';
 import PropTypes from 'prop-types';
 
-export default function TextInput({ label, fieldName, first, topless, imgW, small, formData, setFormData, invalidFields }) {
+export default function TextInput({ label, fieldName, first, small , medium, topless, formData, setFormData, invalidFields }) {
   const [error, setError] = useState(false);
 
   const handleChange = ({ target: { value } }) => {
@@ -20,7 +20,7 @@ export default function TextInput({ label, fieldName, first, topless, imgW, smal
   const isInvalid = invalidFields.includes(fieldName);
 
   return (
-    <InputLabel first={first} topless={topless} imgW={imgW} small={small} style={{ borderColor: isInvalid ? 'red' : 'inherit' }}>
+    <InputLabel first={first} small={small} medium = {medium} topless={topless} style={{ borderColor: isInvalid ? 'red' : 'inherit' }}>
       <GenericP>{label}:</GenericP>
       <Input
         id={label}
