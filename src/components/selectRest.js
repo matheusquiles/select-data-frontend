@@ -1,74 +1,73 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
-import { setFormData, setOptions } from '../redux/reducers/formSlice'; 
+import { setFormData, setOptions, setLoading} from '../redux/reducers/formSlice';
 import { InputLabel, StyledSelect } from '../styles/formulario';
 import { GenericP } from '../styles/globalstyles';
 import { API_BASE_URL } from '../helpers/constants';
 import PropTypes from 'prop-types';
+import LoadingSpinner from './LoaderComponent';
 
 export default function SelectRest({ label, first, medium, topless, small, route, id, name, onChange, defaultValue, invalidFields }) {
   const dispatch = useDispatch();
-  const selected = useSelector((state) => state.form.formData[route] || defaultValue); // Obtenha o valor do formData
-  const options = useSelector((state) => state.form.options[route] || []); // Obtenha as opções do Redux
+  const selected = useSelector((state) => state.form.formData[route] || defaultValue);
+  const options = useSelector((state) => state.form.options[route] || []);
   const isInvalid = invalidFields.includes(route);
+  const [loadingDelay, setLoadingDelay] = useState(false);
+  
+  const handleSelect = (event) => {
+    const { value } = event.target;
+    dispatch(setFormData({ [route]: value }));
+    onChange(prevForm => ({
+      ...prevForm,
+      [name]: value
+    }));
+  };
 
   const getData = useCallback(async () => {
+    dispatch(setLoading(true)); 
+    setLoadingDelay(true);
     try {
+      const thisOptions = [];
       const { data } = await axios.get(`${API_BASE_URL}/${route}`);
-      const thisOptions = data.map((obj) => ({ id: obj[id], name: obj[name] }));
-      
+
+      data.forEach((obj) => {
+        thisOptions.push({ id: obj[id], name: obj[name] });
+      });
+
       dispatch(setOptions({ route, options: thisOptions }));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
     } catch (error) {
       console.log('Erro na requisição:', error);
+    } finally {
+      dispatch(setLoading(false)); 
+      setLoadingDelay(false);
     }
   }, [route, id, name, dispatch]);
 
-  const handleSelect = (event) => {
-    const { value } = event.target;
-    dispatch(setFormData({ [route]: value })); 
-    onChange(prevForm => ({
-      ...prevForm,
-      [name]: value 
-    }));
-  };
 
   useEffect(() => {
     if (!options.length) getData();
   }, [getData, options.length]);
 
+  const isLoading = useSelector((state) => state.form.isLoading);
+  const isLoadingDelayed = loadingDelay || isLoading;
+
   return (
-    options.length === 0
-      ? <p>Carregando...</p>
-      : (
-        <InputLabel first={first} medium={medium} topless={topless} small={small} style={{ borderColor: isInvalid ? 'red' : 'inherit' }}>
-          <GenericP>{label}:</GenericP>
-          <StyledSelect onChange={handleSelect} value={selected} style={{ borderColor: isInvalid ? 'red' : 'inherit' }}>
-            <option value="">{`Selecione`}</option>
-            {options.map(({ id, name }) => <option key={id} value={id}>{name}</option>)}
-          </StyledSelect>
-          {isInvalid && <span style={{ color: 'red' }}>Este campo é obrigatório.</span>}
-        </InputLabel>
-      )
+    isLoadingDelayed ? (
+      <div className="loading-spinner"> {
+        <LoadingSpinner />
+      }
+      </div>
+    ) : (
+      <InputLabel first={first} medium={medium} topless={topless} small={small} style={{ borderColor: isInvalid ? 'red' : 'inherit' }}>
+        <GenericP>{label}:</GenericP>
+        <StyledSelect onChange={handleSelect} value={selected} style={{ borderColor: isInvalid ? 'red' : 'inherit' }}>
+          <option value="">{`Selecione`}</option>
+          {options.map(({ id, name }) => <option key={id} value={id}>{name}</option>)}
+        </StyledSelect>
+        {isInvalid && <span style={{ color: 'red' }}>Este campo é obrigatório.</span>}
+      </InputLabel>
+   )
   );
 }
-
-SelectRest.propTypes = {
-  label: PropTypes.string.isRequired,
-  first: PropTypes.bool,
-  topless: PropTypes.bool,
-  small: PropTypes.bool,
-  route: PropTypes.string.isRequired,
-  id: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
-  defaultValue: PropTypes.string,
-  invalidFields: PropTypes.array.isRequired,
-};
-
-SelectRest.defaultProps = {
-  first: false,
-  topless: false,
-  small: false,
-  defaultValue: '',
-};

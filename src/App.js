@@ -1,13 +1,14 @@
 import React from 'react';
-import { Provider } from 'react-redux'; // Importa o Provider
-import store from './redux/store'; // Importa a store
+import { Provider } from 'react-redux'; 
+import store from './redux/store';
 import Frame from './components/frame.js';
 import './CadastroProcesso.css';
 import Home from './components/home.js';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
   return (
-    <Provider store={store}> {/* Envolve a aplicação com o Provider */}
+    <Provider store={store}>
       <Frame>
         <Home />
       </Frame>

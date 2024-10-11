@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
-import { setFormData, setInvalidFields, setSelectedPedidos } from './redux/reducers/formSlice';
+import { setLoading, setFormData, setInvalidFields, setSelectedPedidos, fetchEscritorio, fetchFaseProcessual } from './redux/reducers/formSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import Input from './components/input.js';
 import SelectRest from './components/selectRest.js';
 import DateImput from './components/date.js';
+import LoadingSpinner from './components/LoaderComponent.js';
 import MoneyImput from './components/money.js';
 import * as F from './styles/formulario.jsx';
 import EstadoCidadeInput from './components/cidadeEstado.js';
@@ -12,13 +13,26 @@ import MultiSelectRest from './components/multiSelectRest.js';
 
 const CadastroProcesso = () => {
   const dispatch = useDispatch();
+  const loading = useSelector((state) => state.form.loading);
   const formData = useSelector((state) => state.form.formData);
   const invalidFields = useSelector((state) => state.form.invalidFields);
   const selectedPedidos = useSelector((state) => state.form.selectedPedidos);
   const errorMessage = useSelector((state) => state.form.errorMessage);
-
-
   const apiBaseUrl = 'http://localhost:8080/api/';
+
+
+  useEffect(() => {
+    dispatch(setLoading(true)); // Inicializa o estado de carregamento como true
+    const timer = setTimeout(() => {
+      // Após 2 segundos, realiza as requisições
+      dispatch(fetchEscritorio()); 
+      dispatch(fetchFaseProcessual());
+      dispatch(setLoading(false)); // Depois das requisições, desabilita o loading
+    }, 2000); // 2 segundos de espera
+
+    // Limpa o timer quando o componente é desmontado
+    return () => clearTimeout(timer);
+  }, [dispatch]);
 
   const toCamelCase = (str) => {
     return str.replace(/_([a-z])/g, (match, letter) => letter.toUpperCase());
@@ -104,254 +118,263 @@ const CadastroProcesso = () => {
     }
   };
 
+  const isLoading = loading && Object.values(loading).some((isLoading) => isLoading);
 
   return (
-    <form onSubmit={handleSubmit} className="cadastro-processo-form">
-      <F.InputLine column>
-        <F.InputLine>
-          <SelectRest
-            label="Escritório"
-            first route='escritorio'
-            id='idEscritorio'
-            name='nomeEscritorio'
-            onChange={handleChange}
-            form={formData}
-            defaultValue=""
-            invalidFields={invalidFields}
-          />
-          <Input
-            label="Nº do Processo"
-            fieldName="numeroProcesso"
-            formData={formData}
-            setFormData={setFormData}
-            onChange={handleChange}
-            invalidFields={invalidFields}
-          />
-          <SelectRest
-            label="Fase Processual"
-            route='faseProcessual'
-            id='idFaseProcessual'
-            name='faseProcessual'
-            onChange={setFormData}
-            defaultValue=""
-            form={formData}
-            invalidFields={invalidFields}
-          />
-        </F.InputLine>
+    <>
+      {isLoading ? (
+        <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
+          <LoadingSpinner />
+        </div>
+      ) : (
 
-        <F.InputLine topless>
-          <Input
-            label="Autor" first medium
-            fieldName="autor"
-            formData={formData}
-            setFormData={setFormData}
-            onChange={handleChange}
-            invalidFields={invalidFields}
-          />
-          <Input
-            label="Réu"
-            fieldName="reu"
-            formData={formData}
-            setFormData={setFormData}
-            onChange={handleChange}
-          />
-          <Input
-            label="Reclamada"
-            fieldName="reclamada"
-            formData={formData}
-            setFormData={setFormData}
-            onChange={handleChange}
-          />
-        </F.InputLine>
-      </F.InputLine>
+        <form onSubmit={handleSubmit} className="cadastro-processo-form">
+          <F.InputLine column>
+            <F.InputLine>
+              <SelectRest
+                label="Escritório"
+                first route='escritorio'
+                id='idEscritorio'
+                name='nomeEscritorio'
+                onChange={handleChange}
+                form={formData}
+                defaultValue=""
+                invalidFields={invalidFields}
+              />
+              <Input
+                label="Nº do Processo"
+                fieldName="numeroProcesso"
+                formData={formData}
+                setFormData={setFormData}
+                onChange={handleChange}
+                invalidFields={invalidFields}
+              />
+              <SelectRest
+                label="Fase Processual"
+                route='faseProcessual'
+                id='idFaseProcessual'
+                name='faseProcessual'
+                onChange={setFormData}
+                defaultValue=""
+                form={formData}
+                invalidFields={invalidFields}
+              />
+            </F.InputLine>
 
-      <F.InputLine>
-        <SelectRest
-          label="Vara"
-          first medium route='vara'
-          id='idVara'
-          name='vara'
-          onChange={setFormData}
-          form={formData}
-          defaultValue=""
-          invalidFields={invalidFields}
-        />
-        <SelectRest
-          label="Classificação de Risco"
-          medium route='classificacaoRisco'
-          id='idClassificacaoRisco'
-          name='classificacaoRisco'
-          onChange={setFormData}
-          form={formData}
-          defaultValue=""
-          invalidFields={invalidFields}
-        />
-        <SelectRest
-          label="Função"
-          route='funcao'
-          id='idFuncao'
-          name='funcao'
-          onChange={setFormData}
-          form={formData}
-          defaultValue=""
-          invalidFields={invalidFields}
-        />
-      </F.InputLine>
+            <F.InputLine topless>
+              <Input
+                label="Autor" first medium
+                fieldName="autor"
+                formData={formData}
+                setFormData={setFormData}
+                onChange={handleChange}
+                invalidFields={invalidFields}
+              />
+              <Input
+                label="Réu"
+                fieldName="reu"
+                formData={formData}
+                setFormData={setFormData}
+                onChange={handleChange}
+              />
+              <Input
+                label="Reclamada"
+                fieldName="reclamada"
+                formData={formData}
+                setFormData={setFormData}
+                onChange={handleChange}
+              />
+            </F.InputLine>
+          </F.InputLine>
 
-      <F.InputLine>
-        <F.SmallInputLine>
-          <SelectRest
-            label="Natureza"
-            first route='natureza'
-            id='idNatureza'
-            name='natureza'
-            onChange={setFormData}
-            form={formData}
-            defaultValue=""
-            invalidFields={invalidFields}
-          />
-          <SelectRest
-            label="Tipo de Ação"
-            small route='tipoAcao'
-            id='idTipoAcao'
-            name='tipoAcao'
-            onChange={setFormData}
-            form={formData}
-            defaultValue=""
-            invalidFields={invalidFields}
-          />
-        </F.SmallInputLine>
-        <F.SmallInputLine>
-          <SelectRest
-            label="Tribunal Origem"
-            first route='tribunal'
-            id='idTribunal'
-            name='tribunalOrigem'
-            onChange={setFormData}
-            form={formData}
-            defaultValue=""
-            invalidFields={invalidFields}
-          />
-          <DateImput
-            label="Data de Ajuizamento"
-            small fieldName="dataAjuizamento"
-            formData={formData}
-            setFormData={setFormData}
-          />
-        </F.SmallInputLine>
-        <MoneyImput
-          label="Valor da Causa"
-          first imgW fieldName="valorCausa"
-          formData={formData}
-          setFormData={setFormData} />
-      </F.InputLine>
+          <F.InputLine>
+            <SelectRest
+              label="Vara"
+              first medium route='vara'
+              id='idVara'
+              name='vara'
+              onChange={setFormData}
+              form={formData}
+              defaultValue=""
+              invalidFields={invalidFields}
+            />
+            <SelectRest
+              label="Classificação de Risco"
+              medium route='classificacaoRisco'
+              id='idClassificacaoRisco'
+              name='classificacaoRisco'
+              onChange={setFormData}
+              form={formData}
+              defaultValue=""
+              invalidFields={invalidFields}
+            />
+            <SelectRest
+              label="Função"
+              route='funcao'
+              id='idFuncao'
+              name='funcao'
+              onChange={setFormData}
+              form={formData}
+              defaultValue=""
+              invalidFields={invalidFields}
+            />
+          </F.InputLine>
 
-      <F.InputLine>
-        <EstadoCidadeInput
-          label="Estado"
-          first
-          formData={formData}
-          setFormData={setFormData}
-        />
-      </F.InputLine>
+          <F.InputLine>
+            <F.SmallInputLine>
+              <SelectRest
+                label="Natureza"
+                first route='natureza'
+                id='idNatureza'
+                name='natureza'
+                onChange={setFormData}
+                form={formData}
+                defaultValue=""
+                invalidFields={invalidFields}
+              />
+              <SelectRest
+                label="Tipo de Ação"
+                small route='tipoAcao'
+                id='idTipoAcao'
+                name='tipoAcao'
+                onChange={setFormData}
+                form={formData}
+                defaultValue=""
+                invalidFields={invalidFields}
+              />
+            </F.SmallInputLine>
+            <F.SmallInputLine>
+              <SelectRest
+                label="Tribunal Origem"
+                first route='tribunal'
+                id='idTribunal'
+                name='tribunalOrigem'
+                onChange={setFormData}
+                form={formData}
+                defaultValue=""
+                invalidFields={invalidFields}
+              />
+              <DateImput
+                label="Data de Ajuizamento"
+                small fieldName="dataAjuizamento"
+                formData={formData}
+                setFormData={setFormData}
+              />
+            </F.SmallInputLine>
+            <MoneyImput
+              label="Valor da Causa"
+              first imgW fieldName="valorCausa"
+              formData={formData}
+              setFormData={setFormData} />
+          </F.InputLine>
 
-      <F.InputLine>
-        <Input
-          label="Últimos andamentos processuais"
-          first fieldName="ultimosAndamentosProcessuais"
-          formData={formData}
-          setFormData={setFormData}
-          onChange={handleChange}
-          invalidFields={invalidFields}
-        />
-      </F.InputLine>
-      <F.InputLine>
-        <MultiSelectRest
-          label="Pedidos do Processo"
-          first route='tipoPedido'
-          id='idTipoPedido'
-          name='descricao'
-          onChange={handleMultiSelectChange}
-          form={formData}
-          defaultValue={[]}
-          invalidFields={invalidFields}
-        />
-      </F.InputLine>
+          <F.InputLine>
+            <EstadoCidadeInput
+              label="Estado"
+              first
+              formData={formData}
+              setFormData={setFormData}
+            />
+          </F.InputLine>
 
-      <F.InputLine>
-        <F.SmallInputLine>
-          <DateImput
-            label="Data Admissão"
-            fieldName="admissao"
-            first medium formData={formData}
-            setFormData={setFormData}
-          />
-          <DateImput
-            label="Data Demissão"
-            fieldName="demissao"
-            formData={formData}
-            setFormData={setFormData}
-          />
-        </F.SmallInputLine>
-      </F.InputLine>
+          <F.InputLine>
+            <Input
+              label="Últimos andamentos processuais"
+              first fieldName="ultimosAndamentosProcessuais"
+              formData={formData}
+              setFormData={setFormData}
+              onChange={handleChange}
+              invalidFields={invalidFields}
+            />
+          </F.InputLine>
+          <F.InputLine>
+            <MultiSelectRest
+              label="Pedidos do Processo"
+              first route='tipoPedido'
+              id='idTipoPedido'
+              name='descricao'
+              onChange={handleMultiSelectChange}
+              form={formData}
+              defaultValue={[]}
+              invalidFields={invalidFields}
+            />
+          </F.InputLine>
+
+          <F.InputLine>
+            <F.SmallInputLine>
+              <DateImput
+                label="Data Admissão"
+                fieldName="admissao"
+                first medium formData={formData}
+                setFormData={setFormData}
+              />
+              <DateImput
+                label="Data Demissão"
+                fieldName="demissao"
+                formData={formData}
+                setFormData={setFormData}
+              />
+            </F.SmallInputLine>
+          </F.InputLine>
 
 
-      <F.InputLine>
-        <F.SmallInputLine>
-          <MoneyImput
-            label="Depósito Recursal (Recurso Ordinário)"
-            first fieldName="depositoRecursalOrdinario"
-            formData={formData}
-            setFormData={setFormData}
-          />
-          <DateImput
-            label="Data do Depósito Recursal (Recurso Ordinário)"
-            fieldName="dataDepositoRecursalOrdinario"
-            formData={formData}
-            setFormData={setFormData}
-          />
-        </F.SmallInputLine>
-      </F.InputLine>
+          <F.InputLine>
+            <F.SmallInputLine>
+              <MoneyImput
+                label="Depósito Recursal (Recurso Ordinário)"
+                first fieldName="depositoRecursalOrdinario"
+                formData={formData}
+                setFormData={setFormData}
+              />
+              <DateImput
+                label="Data do Depósito Recursal (Recurso Ordinário)"
+                fieldName="dataDepositoRecursalOrdinario"
+                formData={formData}
+                setFormData={setFormData}
+              />
+            </F.SmallInputLine>
+          </F.InputLine>
 
-      <F.InputLine>
-        <F.SmallInputLine>
-          <MoneyImput
-            label="Depósito Recursal (Recurso Revista)"
-            first fieldName="depositoRecursalRevista"
-            formData={formData}
-            setFormData={setFormData}
-          />
-          <DateImput
-            label="Data do Depósito Recursal (Recurso Revista)"
-            fieldName="dataDepositoRecursalRevista"
-            formData={formData}
-            setFormData={setFormData}
-          />
-        </F.SmallInputLine>
-      </F.InputLine>
+          <F.InputLine>
+            <F.SmallInputLine>
+              <MoneyImput
+                label="Depósito Recursal (Recurso Revista)"
+                first fieldName="depositoRecursalRevista"
+                formData={formData}
+                setFormData={setFormData}
+              />
+              <DateImput
+                label="Data do Depósito Recursal (Recurso Revista)"
+                fieldName="dataDepositoRecursalRevista"
+                formData={formData}
+                setFormData={setFormData}
+              />
+            </F.SmallInputLine>
+          </F.InputLine>
 
-      <F.InputLine>
-        <F.SmallInputLine>
-          <MoneyImput
-            label="Depósito Judicial"
-            first small fieldName="depositoJudicial"
-            formData={formData}
-            setFormData={setFormData}
-          />
-          <DateImput
-            label="Data do Depósito Judicial"
-            fieldName="dataDepositoJudicial"
-            formData={formData}
-            setFormData={setFormData}
-          />
-        </F.SmallInputLine>
-      </F.InputLine>
+          <F.InputLine>
+            <F.SmallInputLine>
+              <MoneyImput
+                label="Depósito Judicial"
+                first small fieldName="depositoJudicial"
+                formData={formData}
+                setFormData={setFormData}
+              />
+              <DateImput
+                label="Data do Depósito Judicial"
+                fieldName="dataDepositoJudicial"
+                formData={formData}
+                setFormData={setFormData}
+              />
+            </F.SmallInputLine>
+          </F.InputLine>
 
-      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>} {/* Exibir mensagem de erro */}
+          {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>} {/* Exibir mensagem de erro */}
 
-      <button type="submit">Cadastrar Processo</button>
-    </form>
+          <button type="submit">Cadastrar Processo</button>
+        </form>
+      )}
+    </>
   );
 };
-
 export default CadastroProcesso;
