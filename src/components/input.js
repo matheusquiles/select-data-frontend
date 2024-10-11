@@ -3,31 +3,43 @@ import { InputLabel, Input } from '../styles/formulario';
 import { GenericP } from '../styles/globalstyles';
 import PropTypes from 'prop-types';
 
-export default function TextInput({ label, fieldName, first, small , medium, topless, formData, setFormData, invalidFields }) {
+export default function TextInput({ label, fieldName, first, small, medium, topless, formData, setFormData, onChange, invalidFields = [] }) {
   const [error, setError] = useState(false);
 
-  const handleChange = ({ target: { value } }) => {
-    setFormData(prevFormData => ({
-      ...prevFormData,
-      [fieldName]: value,
-    }));
-    
-    if (value.trim() !== '') {
-      setError(false);
+  const handleChange = (e) => {
+    if (e && e.target && e.target.name && e.target.value !== undefined) {
+      const { name, value } = e.target;
+      setFormData(prevFormData => ({
+        ...prevFormData,
+        [name]: value, 
+      }));
+      if (onChange) {
+        onChange(e); 
+      }
+      
+      if (value.trim() !== '') {
+        setError(false);
+      }
+    } else {
+      console.error('Event target is missing name or value:', e ? e.target : 'Event is undefined');
     }
   };
 
   const isInvalid = invalidFields.includes(fieldName);
 
+  console.log('formData:', formData);
+  console.log('fieldName:', fieldName);
+
   return (
-    <InputLabel first={first} small={small} medium = {medium} topless={topless} style={{ borderColor: isInvalid ? 'red' : 'inherit' }}>
+    <InputLabel first={first} small={small} medium={medium} topless={topless} style={{ borderColor: isInvalid ? 'red' : 'inherit' }}>
       <GenericP>{label}:</GenericP>
       <Input
         id={label}
+        name={fieldName}
         type="text"
-        value={formData?.[fieldName] || ''} 
-        onChange={handleChange}
-        style={{ borderColor: isInvalid ? 'red' : 'initial' }} 
+        value={formData?.[fieldName] || ''}
+        onChange={handleChange} 
+        style={{ borderColor: isInvalid ? 'red' : 'initial' }}
       />
       {isInvalid && <span style={{ color: 'red' }}>Este campo é obrigatório</span>} {/* Mensagem de erro */}
     </InputLabel>
@@ -43,7 +55,7 @@ TextInput.propTypes = {
   small: PropTypes.bool,
   formData: PropTypes.object.isRequired,
   setFormData: PropTypes.func.isRequired,
-  invalidFields: PropTypes.array.isRequired,
+  invalidFields: PropTypes.array,
 };
 
 TextInput.defaultProps = {

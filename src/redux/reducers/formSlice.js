@@ -1,43 +1,44 @@
-import {createSlice} from '@reduxjs/toolkit';
-
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-    formData: {
-      admissao: '',
-      demissao: '',
-      principal_pedido: '',
-      ultimos_andamentos_processuais: '',
-      valor_perda_estimado: '',
-      deposito_recursal_ordinario: '',
-      data_deposito_recursal_ordinario: '',
-      deposito_recursal_revista: '',
-      data_deposito_recursal_revista: '',
-      deposito_judicial: '',
-      data_deposito_judicial: '',
-      bloqueio_judicial: '',
-      data_bloqueio_judicial: '',
-      estado: '',
-      cidade: ''
+  formData: {
+    numeroProcesso: '',
+    autor: '',
+  },
+  selectedPedidos: [],
+  options: {},
+  invalidFields: [],
+  errorMessage: ''
+};
+
+const formSlice = createSlice({
+  name: 'form',
+  initialState,
+  reducers: {
+    setFormData: (state, action) => {
+      state.formData = { ...state.formData, ...action.payload };
     },
-    invalidFields: []
-  };
-  
-  const formSlice = createSlice({
-    name: 'form',
-    initialState: {
-      numeroProcesso: '',
-      nomeEscritorio: '',
-      // Adicione mais campos conforme necessário
+    setOptions: (state, action) => {
+      const { route, options } = action.payload;
+      state.options[route] = options; // Armazena opções por rota
     },
-    reducers: {
-      setFormData: (state, action) => {
-        return {
-          ...state,
-          ...action.payload,
-        };
-      },
+    setSelectedPedidos: (state, action) => {
+      state.selectedPedidos = action.payload;
     },
-  });
-  
-  export const { setFormData } = formSlice.actions;
-  export default formSlice.reducer;
+    setInvalidFields: (state, action) => {
+      state.invalidFields = action.payload;
+    },
+    setErrorMessage: (state, action) => {
+      state.errorMessage = action.payload;
+    },
+    resetForm: (state) => {
+      state.formData = {};
+      state.selectedPedidos = [];
+      state.invalidFields = [];
+      state.errorMessage = '';
+    }
+  }
+});
+
+export const { setFormData, setOptions, setSelectedPedidos, setInvalidFields, setErrorMessage, resetForm } = formSlice.actions;
+export default formSlice.reducer;

@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { setFormData, setInvalidFields, setSelectedPedidos } from './redux/reducers/formSlice';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import Input from './components/input.js';
 import SelectRest from './components/selectRest.js';
@@ -9,10 +11,13 @@ import EstadoCidadeInput from './components/cidadeEstado.js';
 import MultiSelectRest from './components/multiSelectRest.js';
 
 const CadastroProcesso = () => {
-  const [invalidFields, setInvalidFields] = useState([]);
-  const [formData, setFormData] = useState({});
-  const [selectedPedidos, setSelectedPedidos] = useState([]);
-  const [errorMessage, setErrorMessage] = useState('');
+  const dispatch = useDispatch();
+  const formData = useSelector((state) => state.form.formData);
+  const invalidFields = useSelector((state) => state.form.invalidFields);
+  const selectedPedidos = useSelector((state) => state.form.selectedPedidos);
+  const errorMessage = useSelector((state) => state.form.errorMessage);
+
+
   const apiBaseUrl = 'http://localhost:8080/api/';
 
   const toCamelCase = (str) => {
@@ -27,75 +32,77 @@ const CadastroProcesso = () => {
     }, {});
   };
 
+
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
+    if (e.target && e.target.name && e.target.value !== undefined) {
+      const { name, value } = e.target;
+      dispatch(setFormData({ [name]: value }));
+    } else {
+      console.error('Event target is missing name or value:', e.target);
+    }
   };
 
 
   const handleMultiSelectChange = (selectedItems) => {
-    console.log("Selected items recebidos:", selectedItems);
 
     if (!Array.isArray(selectedItems)) {
       selectedItems = [];
     }
 
     const mappedItems = selectedItems.map(item => ({
-      tipoPedido: item.id // Usando a prop id para mapear o campo idTipoPedido
+      tipoPedido: item.id
     }));
 
     setSelectedPedidos(mappedItems);
+    dispatch(setSelectedPedidos(mappedItems));
   };
 
 
   const validateFields = () => {
     const requiredFields = ['numeroProcesso', 'autor', 'reu', 'reclamada', 'escritorio', 'faseProcessual', 'classificacaoRisco',
-      'natureza', 'tipoAcao', 'tribunal', 'vara', 'funcao']; // Campos que são obrigatórios
+      'natureza', 'tipoAcao', 'tribunal', 'vara', 'funcao'];
     const invalids = requiredFields.filter(field => !formData[field] || formData[field] === '');
-    setInvalidFields(invalids);
+    dispatch(setInvalidFields(invalids));
     return invalids.length === 0;
   };
 
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  if (validateFields()) {
-    try {
-      const camelCaseFormData = convertKeysToCamelCase(formData);
-      const dataToSend = {
-        ...camelCaseFormData,
-        pedido: selectedPedidos
-      };
+    if (validateFields()) {
+      try {
+        const camelCaseFormData = convertKeysToCamelCase(formData);
+        const dataToSend = {
+          ...camelCaseFormData,
+          pedido: selectedPedidos
+        };
 
-      console.log("Dados a serem enviados:", JSON.stringify(dataToSend, null, 2));
+        console.log("Dados a serem enviados:", JSON.stringify(dataToSend, null, 2));
 
-      const response = await axios.post(`${apiBaseUrl}processo/salvar`, dataToSend);
+        const response = await axios.post(`${apiBaseUrl}processo/salvar`, dataToSend);
 
-      if (response.data === true) {
-        alert('Processo criado com sucesso!');
-      } else {
-        alert('Já existe um processo com esse número.');
+        if (response.data === true) {
+          alert('Processo criado com sucesso!');
+        } else {
+          alert('Já existe um processo com esse número.');
+        }
+
+      } catch (error) {
+        console.error('Erro ao criar o processo:', error);
+
+        if (error.response) {
+          alert(`Erro ao criar o processo: ${error.response.data.message || 'Erro desconhecido'}`);
+        } else if (error.request) {
+          alert('Erro: Nenhuma resposta recebida do servidor.');
+        } else {
+          alert(`Erro ao configurar a requisição: ${error.message}`);
+        }
       }
-
-    } catch (error) {
-      console.error('Erro ao criar o processo:', error);
-      
-      if (error.response) {
-        alert(`Erro ao criar o processo: ${error.response.data.message || 'Erro desconhecido'}`);
-      } else if (error.request) {
-        alert('Erro: Nenhuma resposta recebida do servidor.');
-      } else {
-        alert(`Erro ao configurar a requisição: ${error.message}`);
-      }
+    } else {
+      alert('Por favor, preencha todos os campos obrigatórios.');
     }
-  } else {
-    alert('Por favor, preencha todos os campos obrigatórios.');
-  }
-};
+  };
 
 
   return (
@@ -107,7 +114,7 @@ const handleSubmit = async (e) => {
             first route='escritorio'
             id='idEscritorio'
             name='nomeEscritorio'
-            onChange={setFormData}
+            onChange={handleChange}
             form={formData}
             defaultValue=""
             invalidFields={invalidFields}
@@ -117,6 +124,7 @@ const handleSubmit = async (e) => {
             fieldName="numeroProcesso"
             formData={formData}
             setFormData={setFormData}
+            onChange={handleChange}
             invalidFields={invalidFields}
           />
           <SelectRest
@@ -137,6 +145,7 @@ const handleSubmit = async (e) => {
             fieldName="autor"
             formData={formData}
             setFormData={setFormData}
+            onChange={handleChange}
             invalidFields={invalidFields}
           />
           <Input
@@ -144,12 +153,14 @@ const handleSubmit = async (e) => {
             fieldName="reu"
             formData={formData}
             setFormData={setFormData}
+            onChange={handleChange}
           />
           <Input
             label="Reclamada"
             fieldName="reclamada"
             formData={formData}
             setFormData={setFormData}
+            onChange={handleChange}
           />
         </F.InputLine>
       </F.InputLine>
@@ -250,6 +261,7 @@ const handleSubmit = async (e) => {
           first fieldName="ultimosAndamentosProcessuais"
           formData={formData}
           setFormData={setFormData}
+          onChange={handleChange}
           invalidFields={invalidFields}
         />
       </F.InputLine>
