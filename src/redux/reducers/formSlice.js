@@ -29,12 +29,12 @@ const formSlice = createSlice({
   name: 'form',
   initialState,
   loading: false,
-  options: {}, 
+  options: {},
   errorMessage: '',
   reducers: {
     loading: {
-      escritorio: false, 
-      faseProcessual: false, 
+      escritorio: false,
+      faseProcessual: false,
     },
 
     setLoading: (state, action) => {
@@ -71,7 +71,7 @@ const formSlice = createSlice({
       }).addCase(fetchEscritorio.rejected, (state) => {
         state.loading.escritorio = false;
       });
-  
+
       builder.addCase(fetchFaseProcessual.pending, (state) => {
         state.loading.outraRota = true;
       }).addCase(fetchFaseProcessual.fulfilled, (state, action) => {
@@ -84,5 +84,11 @@ const formSlice = createSlice({
   }
 });
 
-export const { setLoading, setFormData, setOptions, setSelectedPedidos, setInvalidFields, setErrorMessage, resetForm } = formSlice.actions;
+export const { setLoading,
+  setFormData,
+  setOptions,
+  setSelectedPedidos,
+  setInvalidFields,
+  setErrorMessage,
+  resetForm } = formSlice.actions;
 export default formSlice.reducer;

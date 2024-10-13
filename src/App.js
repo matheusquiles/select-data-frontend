@@ -6,6 +6,7 @@ import './CadastroProcesso.css';
 import Home from './components/home.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+
 function App() {
   return (
     <Provider store={store}>
