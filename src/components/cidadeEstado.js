@@ -27,8 +27,8 @@ export default function EstadoCidadeInput({ label, first, topless, imgW, small, 
     const handleEstadoChange = (e) => {
         const estadoId = e.target.value;
         const estadoNome = e.target.options[e.target.selectedIndex].text; 
-        setEstadoSelecionado(estadoId); // Atualiza com o ID do estado
-        setCidadeSelecionada(''); // Reset cidade quando o estado mudar
+        setEstadoSelecionado(estadoId); 
+        setCidadeSelecionada(''); 
         setFormData({ ...formData, estado: estadoNome, cidade: '' }); 
 
         setIsLoadingCidades(true);
@@ -57,7 +57,7 @@ export default function EstadoCidadeInput({ label, first, topless, imgW, small, 
                 <GenericP>{label} Estado:</GenericP>
                 <StyledSelect 
                     onChange={handleEstadoChange} 
-                    value={estadoSelecionado} // Vincula ao ID do estado
+                    value={estadoSelecionado} 
                     style={{ width: '100%', height: '45px' }}
                     required={required}
                 >

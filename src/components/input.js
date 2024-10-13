@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { InputLabel, Input } from '../styles/formulario';
 import { GenericP } from '../styles/globalstyles';
-import PropTypes from 'prop-types';
 
 export default function TextInput({ label, fieldName, first, small, medium, topless, formData, setFormData, onChange, invalidFields = [] }) {
   const [error, setError] = useState(false);
@@ -41,27 +40,7 @@ export default function TextInput({ label, fieldName, first, small, medium, topl
         onChange={handleChange} 
         style={{ borderColor: isInvalid ? 'red' : 'initial' }}
       />
-      {isInvalid && <span style={{ color: 'red' }}>Este campo é obrigatório</span>} {/* Mensagem de erro */}
+      {isInvalid && <span style={{ color: 'red' }}>Este campo é obrigatório</span>} 
     </InputLabel>
   );
 }
-
-TextInput.propTypes = {
-  label: PropTypes.string.isRequired,
-  fieldName: PropTypes.string.isRequired,
-  first: PropTypes.bool,
-  topless: PropTypes.bool,
-  imgW: PropTypes.bool,
-  small: PropTypes.bool,
-  formData: PropTypes.object.isRequired,
-  setFormData: PropTypes.func.isRequired,
-  invalidFields: PropTypes.array,
-};
-
-TextInput.defaultProps = {
-  first: false,
-  topless: false,
-  imgW: false,
-  small: false,
-  invalidFields: [],
-};

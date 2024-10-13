@@ -82,9 +82,11 @@ export default function Sidebar({setActiveComponent }) {
                     ':root': {
                         '--Sidebar-width': '220px',
                         '--Icon-size': '24px',
+                        '--font-size': '14px',
                         [theme.breakpoints.up('lg')]: {
                             '--Sidebar-width': '280px',
                             '--Icon-size': '24px',
+                            '--font-size': '14px',
                         },
                     },
                 })}

@@ -22,17 +22,29 @@ const CadastroProcesso = () => {
 
 
   useEffect(() => {
-    dispatch(setLoading(true)); // Inicializa o estado de carregamento como true
-    const timer = setTimeout(() => {
-      // Após 2 segundos, realiza as requisições
-      dispatch(fetchEscritorio()); 
-      dispatch(fetchFaseProcessual());
-      dispatch(setLoading(false)); // Depois das requisições, desabilita o loading
-    }, 2000); // 2 segundos de espera
+    const fetchData = async () => {
+      dispatch(setLoading(true));
 
-    // Limpa o timer quando o componente é desmontado
-    return () => clearTimeout(timer);
+      const timer = setTimeout(async () => {
+        try {
+          await Promise.all([
+            dispatch(fetchEscritorio()),
+            dispatch(fetchFaseProcessual())
+          ]);
+        } catch (error) {
+          console.error('Erro ao buscar dados:', error);
+        } finally {
+          dispatch(setLoading(false));
+        }
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    };
+
+    fetchData();
   }, [dispatch]);
+
+
 
   const toCamelCase = (str) => {
     return str.replace(/_([a-z])/g, (match, letter) => letter.toUpperCase());
@@ -122,12 +134,11 @@ const CadastroProcesso = () => {
 
   return (
     <>
-      {isLoading ? (
+      {loading ? (
         <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
           <LoadingSpinner />
         </div>
       ) : (
-
         <form onSubmit={handleSubmit} className="cadastro-processo-form">
           <F.InputLine column>
             <F.InputLine>
@@ -140,31 +151,11 @@ const CadastroProcesso = () => {
                 form={formData}
                 defaultValue=""
                 invalidFields={invalidFields}
+                loading={loading}
               />
               <Input
                 label="Nº do Processo"
                 fieldName="numeroProcesso"
-                formData={formData}
-                setFormData={setFormData}
-                onChange={handleChange}
-                invalidFields={invalidFields}
-              />
-              <SelectRest
-                label="Fase Processual"
-                route='faseProcessual'
-                id='idFaseProcessual'
-                name='faseProcessual'
-                onChange={setFormData}
-                defaultValue=""
-                form={formData}
-                invalidFields={invalidFields}
-              />
-            </F.InputLine>
-
-            <F.InputLine topless>
-              <Input
-                label="Autor" first medium
-                fieldName="autor"
                 formData={formData}
                 setFormData={setFormData}
                 onChange={handleChange}
@@ -177,6 +168,28 @@ const CadastroProcesso = () => {
                 setFormData={setFormData}
                 onChange={handleChange}
               />
+            </F.InputLine>
+
+            <F.InputLine>
+              <SelectRest
+                label="Fase Processual"
+                first medium route='faseProcessual'
+                id='idFaseProcessual'
+                name='faseProcessual'
+                onChange={setFormData}
+                defaultValue=""
+                form={formData}
+                invalidFields={invalidFields}
+                loading={loading}
+              />
+              <Input
+                label="Autor"
+                fieldName="autor"
+                formData={formData}
+                setFormData={setFormData}
+                onChange={handleChange}
+                invalidFields={invalidFields}
+              />
               <Input
                 label="Reclamada"
                 fieldName="reclamada"
@@ -185,43 +198,44 @@ const CadastroProcesso = () => {
                 onChange={handleChange}
               />
             </F.InputLine>
-          </F.InputLine>
 
-          <F.InputLine>
-            <SelectRest
-              label="Vara"
-              first medium route='vara'
-              id='idVara'
-              name='vara'
-              onChange={setFormData}
-              form={formData}
-              defaultValue=""
-              invalidFields={invalidFields}
-            />
-            <SelectRest
-              label="Classificação de Risco"
-              medium route='classificacaoRisco'
-              id='idClassificacaoRisco'
-              name='classificacaoRisco'
-              onChange={setFormData}
-              form={formData}
-              defaultValue=""
-              invalidFields={invalidFields}
-            />
-            <SelectRest
-              label="Função"
-              route='funcao'
-              id='idFuncao'
-              name='funcao'
-              onChange={setFormData}
-              form={formData}
-              defaultValue=""
-              invalidFields={invalidFields}
-            />
-          </F.InputLine>
+            <F.InputLine>
+              <SelectRest
+                label="Vara"
+                first medium route='vara'
+                id='idVara'
+                name='vara'
+                onChange={setFormData}
+                form={formData}
+                defaultValue=""
+                invalidFields={invalidFields}
+                loading={loading} // Passando o estado de loading para o component
+              />
+              <SelectRest
+                label="Classificação de Risco"
+                medium route='classificacaoRisco'
+                id='idClassificacaoRisco'
+                name='classificacaoRisco'
+                onChange={setFormData}
+                form={formData}
+                defaultValue=""
+                invalidFields={invalidFields}
+                loading={loading} // Passando o estado de loading para o component
+              />
+              <SelectRest
+                label="Função"
+                route='funcao'
+                id='idFuncao'
+                name='funcao'
+                onChange={setFormData}
+                form={formData}
+                defaultValue=""
+                invalidFields={invalidFields}
+                loading={loading} // Passando o estado de loading para o component
+              />
+            </F.InputLine>
 
-          <F.InputLine>
-            <F.SmallInputLine>
+            <F.MediumInputLine>
               <SelectRest
                 label="Natureza"
                 first route='natureza'
@@ -231,6 +245,7 @@ const CadastroProcesso = () => {
                 form={formData}
                 defaultValue=""
                 invalidFields={invalidFields}
+                loading={loading} // Passando o estado de loading para o component
               />
               <SelectRest
                 label="Tipo de Ação"
@@ -241,9 +256,11 @@ const CadastroProcesso = () => {
                 form={formData}
                 defaultValue=""
                 invalidFields={invalidFields}
+                loading={loading}
               />
-            </F.SmallInputLine>
-            <F.SmallInputLine>
+            </F.MediumInputLine>
+
+            <F.MediumInputLine>
               <SelectRest
                 label="Tribunal Origem"
                 first route='tribunal'
@@ -253,6 +270,7 @@ const CadastroProcesso = () => {
                 form={formData}
                 defaultValue=""
                 invalidFields={invalidFields}
+                loading={loading}
               />
               <DateImput
                 label="Data de Ajuizamento"
@@ -260,52 +278,53 @@ const CadastroProcesso = () => {
                 formData={formData}
                 setFormData={setFormData}
               />
-            </F.SmallInputLine>
-            <MoneyImput
-              label="Valor da Causa"
-              first imgW fieldName="valorCausa"
-              formData={formData}
-              setFormData={setFormData} />
-          </F.InputLine>
+              <MoneyImput
+                label="Valor da Causa"
+                imgW fieldName="valorCausa"
+                formData={formData}
+                setFormData={setFormData} />
+            </F.MediumInputLine>
 
-          <F.InputLine>
-            <EstadoCidadeInput
-              label="Estado"
-              first
-              formData={formData}
-              setFormData={setFormData}
-            />
-          </F.InputLine>
 
-          <F.InputLine>
-            <Input
-              label="Últimos andamentos processuais"
-              first fieldName="ultimosAndamentosProcessuais"
-              formData={formData}
-              setFormData={setFormData}
-              onChange={handleChange}
-              invalidFields={invalidFields}
-            />
-          </F.InputLine>
-          <F.InputLine>
-            <MultiSelectRest
-              label="Pedidos do Processo"
-              first route='tipoPedido'
-              id='idTipoPedido'
-              name='descricao'
-              onChange={handleMultiSelectChange}
-              form={formData}
-              defaultValue={[]}
-              invalidFields={invalidFields}
-            />
-          </F.InputLine>
+            <F.MediumInputLine>
+              <EstadoCidadeInput
+                label="Estado"
+                first
+                formData={formData}
+                setFormData={setFormData}
+              />
+            </F.MediumInputLine>
 
-          <F.InputLine>
+            <F.InputLine>
+              <Input
+                label="Últimos andamentos processuais"
+                first fieldName="ultimosAndamentosProcessuais"
+                formData={formData}
+                setFormData={setFormData}
+                onChange={handleChange}
+                invalidFields={invalidFields}
+              />
+            </F.InputLine>
+
+            <F.MediumInputLine>
+              <MultiSelectRest
+                label="Pedidos do Processo"
+                first route='tipoPedido'
+                id='idTipoPedido'
+                name='descricao'
+                onChange={handleMultiSelectChange}
+                form={formData}
+                defaultValue={[]}
+                invalidFields={invalidFields}
+                loading={loading}
+              />
+            </F.MediumInputLine>
+
             <F.SmallInputLine>
               <DateImput
                 label="Data Admissão"
                 fieldName="admissao"
-                first medium formData={formData}
+                first formData={formData}
                 setFormData={setFormData}
               />
               <DateImput
@@ -315,48 +334,41 @@ const CadastroProcesso = () => {
                 setFormData={setFormData}
               />
             </F.SmallInputLine>
-          </F.InputLine>
 
-
-          <F.InputLine>
             <F.SmallInputLine>
               <MoneyImput
-                label="Depósito Recursal (Recurso Ordinário)"
+                label="Depósito Recurso Ordinário"
                 first fieldName="depositoRecursalOrdinario"
                 formData={formData}
                 setFormData={setFormData}
               />
               <DateImput
-                label="Data do Depósito Recursal (Recurso Ordinário)"
+                label="Data Recurso Ordinário"
                 fieldName="dataDepositoRecursalOrdinario"
                 formData={formData}
                 setFormData={setFormData}
               />
             </F.SmallInputLine>
-          </F.InputLine>
 
-          <F.InputLine>
             <F.SmallInputLine>
               <MoneyImput
-                label="Depósito Recursal (Recurso Revista)"
+                label="Depósito Recurso Revista"
                 first fieldName="depositoRecursalRevista"
                 formData={formData}
                 setFormData={setFormData}
               />
               <DateImput
-                label="Data do Depósito Recursal (Recurso Revista)"
+                label="Data Recurso Revista"
                 fieldName="dataDepositoRecursalRevista"
                 formData={formData}
                 setFormData={setFormData}
               />
             </F.SmallInputLine>
-          </F.InputLine>
 
-          <F.InputLine>
             <F.SmallInputLine>
               <MoneyImput
                 label="Depósito Judicial"
-                first small fieldName="depositoJudicial"
+                first fieldName="depositoJudicial"
                 formData={formData}
                 setFormData={setFormData}
               />
@@ -367,12 +379,13 @@ const CadastroProcesso = () => {
                 setFormData={setFormData}
               />
             </F.SmallInputLine>
+
           </F.InputLine>
 
           {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>} {/* Exibir mensagem de erro */}
 
           <button type="submit">Cadastrar Processo</button>
-        </form>
+        </form >
       )}
     </>
   );

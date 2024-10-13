@@ -40,6 +40,8 @@ export default function Header() {
                 variant="outlined"
                 color="neutral"
                 size="sm"
+                width="30px"
+                
             >
                 <MenuIcon />
             </IconButton>
