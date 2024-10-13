@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import * as F from '../styles/frame.jsx';
 import CadastroProcesso from '../CadastroProcesso';
 import ConsultarProcesso from '../Processos';
+import Sidebar from './sideBar.js';
 
 const Frame = ({ children }) => {
   const [openSubMenu, setOpenSubMenu] = useState('');
@@ -17,6 +18,7 @@ const Frame = ({ children }) => {
 
   return (
     <F.FrameWrapper>
+
       <F.Sidebar>
         <F.Logo src="/images/logo.png" alt="Logo" />
         <F.MenuItem onClick={() => toggleSubMenu('processos')}>
@@ -75,9 +77,6 @@ const Frame = ({ children }) => {
         <F.Content>
           {activeComponent || children}
         </F.Content>
-        <F.Footer>
-          <p>© 2024 Shopia Softwares</p>
-        </F.Footer>
       </div>
     </F.FrameWrapper>
   );
