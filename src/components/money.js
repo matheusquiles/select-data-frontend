@@ -4,12 +4,17 @@ import { GenericP } from '../styles/globalstyles';
 import { NumericFormat } from 'react-number-format';
 
 export default function MoneyImput({ label, fieldName, first, topless, imgW, small, formData, setFormData, value, onChange }) {
+    
     const handleChange = (values) => {
-        const { value } = values; // valor numérico sem formatação
+        const { value } = values; 
         setFormData(prevFormData => ({
             ...prevFormData,
             [fieldName]: value,
         }));
+        // Chama a função onChange passada como prop
+        if (onChange) {
+            onChange({ target: { name: fieldName, value } });
+        }
     };
 
     return (
@@ -18,7 +23,7 @@ export default function MoneyImput({ label, fieldName, first, topless, imgW, sma
             <NumericFormat
                 id={label}
                 value={value}
-                onValueChange={handleChange}
+                onValueChange={handleChange} // Use onValueChange para NumericFormat
                 thousandSeparator="."
                 decimalSeparator=","
                 prefix="R$ "

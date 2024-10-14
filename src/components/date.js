@@ -2,12 +2,16 @@ import React from 'react';
 import { InputLabel, InputDate } from '../styles/formulario';
 import { GenericP } from '../styles/globalstyles';
 
-export default function DateImput({ label, fieldName, first, topless, small, medium, setFormData, value }) {
+export default function DateImput({ label, fieldName, first, topless, small, medium, setFormData, onChange, value }) {
     const handleChange = ({ target: { value } }) => {
         setFormData(prevFormData => ({
             ...prevFormData,
             [fieldName]: value,
         }));
+        // Chama a função onChange passada como prop
+        if (onChange) {
+            onChange({ target: { name: fieldName, value } });
+        }
     };
 
     return (

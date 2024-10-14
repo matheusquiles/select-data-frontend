@@ -277,14 +277,15 @@ const CadastroProcesso = () => {
                 small fieldName="dataAjuizamento"
                 formData={formData}
                 setFormData={setFormData}
+                onChange={handleChange}
               />
               <MoneyImput
                 label="Valor da Causa"
                 imgW fieldName="valorCausa"
                 formData={formData}
-                setFormData={setFormData} />
+                setFormData={setFormData} 
+                onChange={handleChange}/>
             </F.MediumInputLine>
-
 
             <F.MediumInputLine>
               <EstadoCidadeInput
@@ -292,6 +293,7 @@ const CadastroProcesso = () => {
                 first
                 formData={formData}
                 setFormData={setFormData}
+                onChange={handleChange}
               />
             </F.MediumInputLine>
 
@@ -326,12 +328,14 @@ const CadastroProcesso = () => {
                 fieldName="admissao"
                 first formData={formData}
                 setFormData={setFormData}
+                onChange={handleChange}
               />
               <DateImput
                 label="Data Demissão"
                 fieldName="demissao"
                 formData={formData}
                 setFormData={setFormData}
+                onChange={handleChange}
               />
             </F.SmallInputLine>
 
@@ -341,12 +345,14 @@ const CadastroProcesso = () => {
                 first fieldName="depositoRecursalOrdinario"
                 formData={formData}
                 setFormData={setFormData}
+                onChange={handleChange}
               />
               <DateImput
                 label="Data Recurso Ordinário"
                 fieldName="dataDepositoRecursalOrdinario"
                 formData={formData}
                 setFormData={setFormData}
+                onChange={handleChange}
               />
             </F.SmallInputLine>
 
@@ -356,12 +362,14 @@ const CadastroProcesso = () => {
                 first fieldName="depositoRecursalRevista"
                 formData={formData}
                 setFormData={setFormData}
+                onChange={handleChange}
               />
               <DateImput
                 label="Data Recurso Revista"
                 fieldName="dataDepositoRecursalRevista"
                 formData={formData}
                 setFormData={setFormData}
+                onChange={handleChange}
               />
             </F.SmallInputLine>
 
@@ -371,12 +379,14 @@ const CadastroProcesso = () => {
                 first fieldName="depositoJudicial"
                 formData={formData}
                 setFormData={setFormData}
+                onChange={handleChange}
               />
               <DateImput
                 label="Data do Depósito Judicial"
                 fieldName="dataDepositoJudicial"
                 formData={formData}
                 setFormData={setFormData}
+                onChange={handleChange}
               />
             </F.SmallInputLine>
 

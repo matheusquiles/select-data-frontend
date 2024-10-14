@@ -62,6 +62,12 @@ const formSlice = createSlice({
       state.invalidFields = [];
       state.errorMessage = '';
     },
+    abrirCadastroProcesso: (state) => {
+      state.isCadastroProcessoAberto = true;
+    },
+    fecharCadastroProcesso: (state) => {
+      state.isCadastroProcessoAberto = false;
+    },
     extraReducers: (builder) => {
       builder.addCase(fetchEscritorio.pending, (state) => {
         state.loading.escritorio = true;

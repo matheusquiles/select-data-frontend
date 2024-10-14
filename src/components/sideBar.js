@@ -208,7 +208,7 @@ export default function Sidebar({setActiveComponent }) {
                                         component="a"
                                         href="/joy-ui/getting-started/templates/profile-dashboard/"
                                     >
-                                        Meu Profile
+                                        Meu Perfil
                                     </ListItemButton>
                                 </ListItem>
                                 <ListItem>

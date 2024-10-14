@@ -4,7 +4,7 @@ import { InputLabel, StyledSelect, InputWrapper } from '../styles/formulario';
 import { GenericP } from '../styles/globalstyles';
 import PropTypes from 'prop-types';
 
-export default function EstadoCidadeInput({ label, first, topless, imgW, small, formData, setFormData, required, invalidFields = [] }) {
+export default function EstadoCidadeInput({ label, first, topless, imgW, small, formData, setFormData, required, invalidFields = [], onChange }) {
     const [estados, setEstados] = useState([]);
     const [cidades, setCidades] = useState([]);
     const [estadoSelecionado, setEstadoSelecionado] = useState(formData.estado || '');
@@ -31,6 +31,11 @@ export default function EstadoCidadeInput({ label, first, topless, imgW, small, 
         setCidadeSelecionada(''); 
         setFormData({ ...formData, estado: estadoNome, cidade: '' }); 
 
+        // Chama a função onChange passada como prop
+        if (onChange) {
+            onChange({ target: { name: 'estado', value: estadoNome } });
+        }
+
         setIsLoadingCidades(true);
         axios.get(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${estadoId}/municipios`)
             .then(response => {
@@ -47,6 +52,11 @@ export default function EstadoCidadeInput({ label, first, topless, imgW, small, 
         const cidadeNome = e.target.options[e.target.selectedIndex].text; 
         setCidadeSelecionada(cidadeNome);
         setFormData({ ...formData, cidade: cidadeNome }); 
+
+        // Chama a função onChange passada como prop
+        if (onChange) {
+            onChange({ target: { name: 'cidade', value: cidadeNome } });
+        }
     };
 
     const isInvalid = (field) => invalidFields.includes(field);
@@ -101,6 +111,7 @@ EstadoCidadeInput.propTypes = {
     setFormData: PropTypes.func.isRequired,
     required: PropTypes.bool,
     invalidFields: PropTypes.array,
+    onChange: PropTypes.func,
 };
 
 EstadoCidadeInput.defaultProps = {
@@ -110,4 +121,5 @@ EstadoCidadeInput.defaultProps = {
     small: false,
     required: false,
     invalidFields: [],
+    onChange: () => {},
 };
