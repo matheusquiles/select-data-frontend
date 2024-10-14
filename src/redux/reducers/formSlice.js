@@ -62,19 +62,16 @@ const formSlice = createSlice({
       state.errorMessage = '';
     },
     updateFormData(state, action) {
-      state.formData = action.payload; 
-  },
-    abrirCadastroProcesso: (state) => {
-      state.isCadastroProcessoAberto = true;
+      state.formData = action.payload;
     },
-    fecharCadastroProcesso: (state) => {
-      state.isCadastroProcessoAberto = false;
-    },
-
     setLookupResponse: (state, action) => {
       const response = action.payload;
       if (response && response.numeroProcesso) {
-        state.formData = response;
+        state.formData = {
+          ...state.formData,
+          numeroProcesso: response.numeroProcesso || '',
+          autor: response.autor || '', 
+        };
         state.isValidResponse = true;
       } else {
         state.errorMessage = "Processo não encontrado ou dados inválidos.";
@@ -115,5 +112,5 @@ export const { setLoading,
   resetForm,
   updateFormData,
   setLookupResponse,
-  setIsValidResponse} = formSlice.actions;
+  setIsValidResponse } = formSlice.actions;
 export default formSlice.reducer;

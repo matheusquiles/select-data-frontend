@@ -4,7 +4,7 @@ import { LookupLabel, Input, LookupButton } from '../styles/formulario';
 import { GenericP } from '../styles/globalstyles';
 import { API_BASE_URL } from '../helpers/constants';
 
-export default function LookupRest({ label, route, id, name, first, small, onChange, invalidFields, blocked }) {
+export default function LookupRest({ label, route, id, name, first, small, onChange, onResponse, invalidFields, blocked }) {
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState(null);
@@ -17,11 +17,15 @@ export default function LookupRest({ label, route, id, name, first, small, onCha
       setResult(resultData);
       setIsLoading(false);
       onChange(resultData);
+
+      if (onResponse) {
+        onResponse(resultData);  
+      }
     } catch (error) {
       console.log('Erro na requisição:', error);
       setIsLoading(false);
     }
-  }, [inputValue, route, id, name, onChange]);
+  }, [inputValue, route, id, name, onChange, onResponse]);
 
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
@@ -39,19 +43,17 @@ export default function LookupRest({ label, route, id, name, first, small, onCha
     }
   }, [blocked]);
 
-  const isEditable = blocked !== undefined ? blocked : true;
-
   const isInvalid = invalidFields.includes(route);
 
   return (
     <LookupLabel first={first} small={small} style={{ borderColor: isInvalid ? 'red' : 'inherit' }}>
-      <GenericP>{label}:</GenericP>
+      <GenericP>{label}</GenericP>
       <div style={{ display: 'flex', alignItems: 'center' }}>
-        <Input 
-          type="text" 
-          value={inputValue} 
-          onChange={handleInputChange} 
-          placeholder="Digite para buscar" 
+        <Input
+          type="text"
+          value={inputValue}
+          onChange={handleInputChange}
+          placeholder="Digite para buscar"
           style={{ borderColor: isInvalid ? 'red' : 'inherit' }}
         />
         <LookupButton onClick={handleLookupClick}>🔍</LookupButton>

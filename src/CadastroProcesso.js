@@ -10,6 +10,7 @@ import MoneyImput from './components/money.js';
 import * as F from './styles/formulario.jsx';
 import EstadoCidadeInput from './components/cidadeEstado.js';
 import MultiSelectRest from './components/multiSelectRest.js';
+import { API_BASE_URL } from './helpers/constants.js'; 
 
 import { CssVarsProvider } from '@mui/joy/styles';
 import CssBaseline from '@mui/joy/CssBaseline';
@@ -28,7 +29,6 @@ const CadastroProcesso = () => {
   const invalidFields = useSelector((state) => state.form.invalidFields);
   const selectedPedidos = useSelector((state) => state.form.selectedPedidos);
   const errorMessage = useSelector((state) => state.form.errorMessage);
-  const apiBaseUrl = 'http://localhost:8080/api/';
 
 
   useEffect(() => {
@@ -116,7 +116,7 @@ const CadastroProcesso = () => {
 
         console.log("Dados a serem enviados:", JSON.stringify(dataToSend, null, 2));
 
-        const response = await axios.post(`${apiBaseUrl}processo/salvar`, dataToSend);
+        const response = await axios.post(`${API_BASE_URL}/processo/salvar`, dataToSend);
 
         if (response.data === true) {
           alert('Processo criado com sucesso!');
@@ -145,7 +145,7 @@ const CadastroProcesso = () => {
   return (
 
     <>
-      {loading ? (
+      {isLoading ? (
         <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
           <LoadingSpinner />
         </div>
@@ -183,7 +183,6 @@ const CadastroProcesso = () => {
                     <Link
                       underline="none"
                       color="neutral"
-                      href="#some-link"
                       aria-label="Home"
                     >
                       <HomeRoundedIcon />
@@ -191,7 +190,6 @@ const CadastroProcesso = () => {
                     <Link
                       underline="hover"
                       color="neutral"
-                      href="#some-link"
                       sx={{ fontSize: 12, fontWeight: 500 }}
                     >
                       Processos
