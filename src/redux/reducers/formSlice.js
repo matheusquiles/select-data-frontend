@@ -36,7 +36,6 @@ const formSlice = createSlice({
       escritorio: false,
       faseProcessual: false,
     },
-
     setLoading: (state, action) => {
       state.isLoading = action.payload;
     },
@@ -62,11 +61,28 @@ const formSlice = createSlice({
       state.invalidFields = [];
       state.errorMessage = '';
     },
+    updateFormData(state, action) {
+      state.formData = action.payload; 
+  },
     abrirCadastroProcesso: (state) => {
       state.isCadastroProcessoAberto = true;
     },
     fecharCadastroProcesso: (state) => {
       state.isCadastroProcessoAberto = false;
+    },
+
+    setLookupResponse: (state, action) => {
+      const response = action.payload;
+      if (response && response.numeroProcesso) {
+        state.formData = response;
+        state.isValidResponse = true;
+      } else {
+        state.errorMessage = "Processo não encontrado ou dados inválidos.";
+        state.isValidResponse = false;
+      }
+    },
+    setIsValidResponse: (state, action) => {
+      state.isValidResponse = action.payload;
     },
     extraReducers: (builder) => {
       builder.addCase(fetchEscritorio.pending, (state) => {
@@ -96,5 +112,8 @@ export const { setLoading,
   setSelectedPedidos,
   setInvalidFields,
   setErrorMessage,
-  resetForm } = formSlice.actions;
+  resetForm,
+  updateFormData,
+  setLookupResponse,
+  setIsValidResponse} = formSlice.actions;
 export default formSlice.reducer;

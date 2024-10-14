@@ -50,7 +50,7 @@ function Toggler({ defaultExpanded = false, renderToggle, children }) {
 }
 
 
-export default function Sidebar({setActiveComponent }) {
+export default function Sidebar({ setActiveComponent }) {
     const handleMenuClick = (component) => {
         setActiveComponent(component);
     };
@@ -81,12 +81,8 @@ export default function Sidebar({setActiveComponent }) {
                 styles={(theme) => ({
                     ':root': {
                         '--Sidebar-width': '220px',
-                        '--Icon-size': '24px',
-                        '--font-size': '14px',
                         [theme.breakpoints.up('lg')]: {
                             '--Sidebar-width': '280px',
-                            '--Icon-size': '24px',
-                            '--font-size': '14px',
                         },
                     },
                 })}
@@ -110,8 +106,12 @@ export default function Sidebar({setActiveComponent }) {
                 }}
                 onClick={() => closeSidebar()}
             />
-            <Box sx={{ display: '16px', gap: 1, alignItems: 'center' }}>
-                <Typography level="title-lg">Select Data</Typography>
+            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                <Typography
+                    level="body-lg"
+                    sx={{ flex: '1', minWidth: '100px', maxWidth: '200px', fontSize: '24px', fontWeight: 'bold'}}>
+                    Select Data
+                </Typography>
                 <ColorSchemeToggle sx={{ ml: 'auto' }} />
             </Box>
             <Input size="sm" startDecorator={<SearchRoundedIcon />} placeholder="Search" />
@@ -256,8 +256,12 @@ export default function Sidebar({setActiveComponent }) {
                     <Typography level="title-sm">Tiago F.</Typography>
                     <Typography level="body-xs">tfitarelli@test.com</Typography>
                 </Box>
-                <IconButton size="sm" variant="plain" color="neutral">
-                    <LogoutRoundedIcon />
+                <IconButton
+                    size="sm"
+                    variant="plain"
+                    color="neutral"
+                    sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '4px' }}>
+                    <LogoutRoundedIcon sx={{ flex: '1', minWidth: '20px', maxWidth: '20px' }}/>
                 </IconButton>
             </Box>
         </Sheet>

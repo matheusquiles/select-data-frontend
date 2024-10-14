@@ -33,17 +33,10 @@ export default function MultiSelectRest({ label, first, topless, imgW, small, ro
   const handleSelect = ({ target: { value } }) => {
     const selectedItem = options.find(option => option.id === Number(value));
 
-    console.log("Valor selecionado:", value); // Log
-    console.log("Item selecionado encontrado:", selectedItem); // Log
-
     if (selectedItem && !selectedItems.some(item => item.id === selectedItem.id)) {
         const newSelectedItems = [...selectedItems, selectedItem];
         setSelectedItems(newSelectedItems);
-
-        console.log("Itens selecionados após adicionar:", newSelectedItems); // Log
-
-        // Aqui, você precisa passar os novos itens selecionados
-        onChange(newSelectedItems); // Passando os itens selecionados
+        onChange(newSelectedItems); 
     }
 };
 
@@ -53,7 +46,7 @@ export default function MultiSelectRest({ label, first, topless, imgW, small, ro
     setSelectedItems(newSelectedItems);
 
     onChange(newSelectedItems.map(item => ({
-      idTipoPedido: item.id // Aqui também deve ser o id do item
+      idTipoPedido: item.id 
     })));
   };
 

@@ -3,6 +3,7 @@ import { useColorScheme } from '@mui/joy/styles';
 import IconButton from '@mui/joy/IconButton';
 import DarkModeRoundedIcon from '@mui/icons-material/DarkModeRounded';
 import LightModeIcon from '@mui/icons-material/LightMode';
+import GlobalStyles from '@mui/joy/GlobalStyles';
 
 export default function ColorSchemeToggle(props) {
   const { onClick, sx, ...other } = props;
@@ -13,18 +14,14 @@ export default function ColorSchemeToggle(props) {
     setMounted(true);
   }, []);
 
-  if (!mounted) {
-    return (
-      <IconButton
-        size="sm"
-        variant="outlined"
-        color="neutral"
-        {...other}
-        sx={sx}
-        disabled
-      />
-    );
-  }
+  <GlobalStyles
+    styles={{
+      ':root': {
+        '--custom-icon-button-size': '40px',
+      },
+    }}
+  />
+
 
   return (
     <IconButton
@@ -38,6 +35,10 @@ export default function ColorSchemeToggle(props) {
         onClick?.(event);
       }}
       sx={[
+        {
+          width: 'var(--Icon-size)', 
+          height: 'var(--Icon-size)', 
+        },
         mode === 'dark'
           ? { '& > *:first-child': { display: 'none' } }
           : { '& > *:first-child': { display: 'initial' } },
