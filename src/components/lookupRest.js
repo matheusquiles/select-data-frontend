@@ -17,9 +17,14 @@ export default function LookupRest({ label, route, id, name, first, small, onCha
       setResult(resultData);
       setIsLoading(false);
       onChange(resultData);
+      console.log("Resposta da API dentro da lookup:", data);
+      
+      if (onChange) {
+        onChange(resultData); 
+      }
 
       if (onResponse) {
-        onResponse(resultData);  
+        onResponse(resultData);
       }
     } catch (error) {
       console.log('Erro na requisição:', error);
@@ -52,11 +57,22 @@ export default function LookupRest({ label, route, id, name, first, small, onCha
         <Input
           type="text"
           value={inputValue}
-          onChange={handleInputChange}
+          onChange={(e) => {
+            setInputValue(e.target.value); // Atualiza o valor local
+          }}
           placeholder="Digite para buscar"
           style={{ borderColor: isInvalid ? 'red' : 'inherit' }}
         />
-        <LookupButton onClick={handleLookupClick}>🔍</LookupButton>
+        <LookupButton type="button" onClick={async () => {
+          await fetchData(); // Executa a busca
+          if (result) {
+            onChange((prev) => ({
+              ...prev,
+              numeroProcesso: result.name, // ou outro campo necessário
+            }));
+          }
+        }}
+      >🔍</LookupButton>
       </div>
       {isInvalid && <span style={{ color: 'red' }}>Este campo é obrigatório.</span>}
       {isLoading && <p>Carregando...</p>}

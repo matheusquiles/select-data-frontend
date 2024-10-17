@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { setLoading, setFormData, setInvalidFields, setSelectedPedidos, fetchEscritorio, fetchFaseProcessual } from './redux/reducers/formSlice';
+import { setLoading, setFormData, setInvalidFields, setSelectedPedidos, fetchEscritorio, fetchFaseProcessual, resetForm } from './redux/reducers/formSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import Input from './components/input.js';
@@ -32,6 +32,7 @@ const CadastroProcesso = () => {
 
 
   useEffect(() => {
+    dispatch(resetForm());
     const fetchData = async () => {
       dispatch(setLoading(true));
 

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import axios from 'axios';
-import { setErrorMessage, setFormData, setIsValidResponse, setSelectedPedidos } from './redux/reducers/formSlice';
+import { setErrorMessage, setFormData, setIsValidResponse, setSelectedPedidos, resetForm } from './redux/reducers/formSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import Input from './components/input.js';
 import SelectRest from './components/selectRest.js';
@@ -30,19 +30,10 @@ const ConsultarProcesso = () => {
     const invalidFields = useSelector((state) => state.form.invalidFields);
 
 
-    // const handleChange = (e) => {
-    //     if (e.target && e.target.name && e.target.value !== undefined) {
-    //         const { name, value } = e.target;
-    //         dispatch(setFormData({ [name]: value }));
-    //     } else {
-    //         console.error('Event target is missing name or value:', e.target);
-    //     }
-    // };
-
     const handleChange = (e) => {
         const { name, value } = e.target;
         console.log("Resposta HandleChange:", e);
-        dispatch(setFormData({ [name]: value })); // Atualiza o formData no Redux
+        dispatch(setFormData({ [name]: value })); 
     };
 
     const handleMultiSelectChange = (selectedItems) => {
@@ -59,25 +50,16 @@ const ConsultarProcesso = () => {
     };
 
 
-    // const handleLookupResponse = (response) => {
-    //     if (response && response.numeroProcesso) {
-    //         dispatch(setLookupResponse(response));
-    //         dispatch(setIsValidResponse(true));
-    //     } else {
-    //         dispatch(setErrorMessage("Processo não encontrado ou dados inválidos."));
-    //         dispatch(setIsValidResponse(false));
-    //     }
-    // };
-
     const handleLookupResponse = (response) => {
+       
         console.log("Resposta da API:", response);
 
         if (response && response.numeroProcesso) {
-            setFormData((prevData) => ({
-                ...prevData,
+            dispatch(setFormData({
                 numeroProcesso: response.numeroProcesso,
                 autor: response.autor || '',
                 nomeEscritorio: response.nomeEscritorio || '',
+                // Adicione outros campos conforme necessário
             }));
 
             dispatch(setIsValidResponse(true));
@@ -85,9 +67,11 @@ const ConsultarProcesso = () => {
             dispatch(setErrorMessage("Processo não encontrado ou dados inválidos."));
             dispatch(setIsValidResponse(false));
         }
+       
     };
 
     useEffect(() => {
+        dispatch(resetForm());
         const fetchData = async () => {
             try {
                 const response = await axios.get(`${API_BASE_URL}/processo/${formData.numeroProcesso}`);
@@ -196,21 +180,21 @@ const ConsultarProcesso = () => {
                                     first route='escritorio'
                                     id='idEscritorio'
                                     name='nomeEscritorio'
-                                    value={formData.numeroProcesso || ""}
-                                    onChange={(e) => setFormData((prev) => ({
-                                        ...prev,
-                                        numeroProcesso: e.target.value,
-                                    }))}
+                                    onChange={setFormData}
                                     form={formData}
                                     invalidFields={invalidFields}
                                     loading={loading}
-                                />
+                                    />
                                 <Input
                                     label="Nº do Processo"
                                     fieldName="numeroProcesso"
                                     formData={formData}
                                     setFormData={setFormData}
-                                    onChange={handleChange}
+                                    value={formData.numeroProcesso || ""}
+                                    onChange={(e) => setFormData((prev) => ({
+                                        ...prev,
+                                        numeroProcesso: e.target.value,
+                                    }))}
                                     invalidFields={invalidFields}
                                 />
                                 <Input
