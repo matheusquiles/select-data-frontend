@@ -26,9 +26,6 @@ export default function TextInput({ label, fieldName, first, small, medium, topl
 
   const isInvalid = invalidFields.includes(fieldName);
 
-  console.log('formData:', formData);
-  console.log('fieldName:', fieldName);
-
   return (
     <InputLabel first={first} small={small} medium={medium} topless={topless} style={{ borderColor: isInvalid ? 'red' : 'inherit' }}>
       <GenericP>{label}:</GenericP>

@@ -1,82 +1,22 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import axios from 'axios';
+import React from 'react';
 import { LookupLabel, Input, LookupButton } from '../styles/formulario';
 import { GenericP } from '../styles/globalstyles';
-import { API_BASE_URL } from '../helpers/constants';
 
-export default function LookupRest({ label, route, id, name, first, small, onChange, onResponse, invalidFields, blocked }) {
-  const [inputValue, setInputValue] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [result, setResult] = useState(null);
-
-  const fetchData = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const { data } = await axios.get(`${API_BASE_URL}/${route}/${inputValue}`);
-      const resultData = data.length ? { id: data[0][id], name: data[0][name] } : null;
-      setResult(resultData);
-      setIsLoading(false);
-      onChange(resultData);
-      console.log("Resposta da API dentro da lookup:", data);
-      
-      if (onChange) {
-        onChange(resultData); 
-      }
-
-      if (onResponse) {
-        onResponse(resultData);
-      }
-    } catch (error) {
-      console.log('Erro na requisição:', error);
-      setIsLoading(false);
-    }
-  }, [inputValue, route, id, name, onChange, onResponse]);
-
-  const handleInputChange = (e) => {
-    setInputValue(e.target.value);
-  };
-
-  const handleLookupClick = () => {
-    if (inputValue.trim()) {
-      fetchData();
-    }
-  };
-
-  useEffect(() => {
-    if (!blocked) {
-      setInputValue('');
-    }
-  }, [blocked]);
-
-  const isInvalid = invalidFields.includes(route);
+export default function LookupRest({ label, value, first, small, onChange, onSearch, invalidFields, blocked }) {
 
   return (
-    <LookupLabel first={first} small={small} style={{ borderColor: isInvalid ? 'red' : 'inherit' }}>
+    <LookupLabel first={first} small={small} style={{ borderColor: 'inherit' }}>
       <GenericP>{label}</GenericP>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <Input
           type="text"
-          value={inputValue}
-          onChange={(e) => {
-            setInputValue(e.target.value); // Atualiza o valor local
-          }}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
           placeholder="Digite para buscar"
-          style={{ borderColor: isInvalid ? 'red' : 'inherit' }}
+          sty
         />
-        <LookupButton type="button" onClick={async () => {
-          await fetchData(); // Executa a busca
-          if (result) {
-            onChange((prev) => ({
-              ...prev,
-              numeroProcesso: result.name, // ou outro campo necessário
-            }));
-          }
-        }}
-      >🔍</LookupButton>
+        <LookupButton type="button" onClick={onSearch}>🔍</LookupButton>
       </div>
-      {isInvalid && <span style={{ color: 'red' }}>Este campo é obrigatório.</span>}
-      {isLoading && <p>Carregando...</p>}
-      {result && <p>Resultado: {result.name}</p>}
     </LookupLabel>
   );
 }
