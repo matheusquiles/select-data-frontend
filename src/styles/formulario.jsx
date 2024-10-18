@@ -12,6 +12,10 @@ export const Input = styled.input`
   padding: 1m;
   box-shadow: ${BOX_SHADOW};
   outline: none;
+     &:disabled {
+    background-color: #F8F8FF; 
+    color: black;  
+  }
 `;
 
 export const selectInput = styled.input`
@@ -62,6 +66,11 @@ export const InputLabel = styled.label`
     max-width: ${({ maxWidth }) => maxWidth && maxWidth};
     padding: ${({ pad, maxWidth }) => pad && `0 calc((100% - ${maxWidth}) / 2)`};
   } */
+     &:disabled {
+    background-color: #F8F8FF; 
+    color: black;  
+  }
+    
 `;
 
 
@@ -109,16 +118,16 @@ export const StyledSelect = styled.select`
   height: 100%;
   overflow-y: scroll;
 
+  &:disabled {
+  background-color: #F8F8FF;
+  color: black;  
+  }
+
   :focus {
     background-color: ${({ $styled }) => !$styled && WHITE};
     box-shadow: ${({ $styled }) => !$styled && BOX_SHADOW};
   }
 
-  :disabled {
-    background-color: ${BACKGROUND};
-    border: solid ${BACKGROUND} 1px;
-    opacity: 0.7;
-  }
 
   ::-webkit-inner-spin-button {
     -webkit-appearance: none;
@@ -132,6 +141,10 @@ export const InputDate = styled.input`
   padding: 0.5em;
   box-shadow: ${BOX_SHADOW};
   outline: none;
+    &:disabled {
+  background-color: #F8F8FF;
+  color: black;  
+  }
 `
 
 export const InputMoney = styled.input`
@@ -142,6 +155,10 @@ export const InputMoney = styled.input`
   padding: 0.5em;
   box-shadow: ${BOX_SHADOW};
   outline: none;
+    &:disabled {
+  background-color: #F8F8FF;
+  color: black;  
+  }
 `
 
 export const InputWrapper = styled.div`

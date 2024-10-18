@@ -23,7 +23,8 @@ const formatDateForInput = (isoDate) => {
     medium, 
     setFormData, 
     onChange, 
-    value 
+    value,
+    disabled = false  
   }) {
     const handleChange = ({ target: { value } }) => {
       const formattedValue = formatDateForApi(value); // Converte para ISO ao enviar
@@ -44,6 +45,7 @@ const formatDateForInput = (isoDate) => {
           type="date"
           value={formatDateForInput(value)} 
           onChange={handleChange}
+          disabled={disabled}
         />
       </InputLabel>
     );

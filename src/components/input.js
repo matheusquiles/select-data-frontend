@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { InputLabel, Input } from '../styles/formulario';
 import { GenericP } from '../styles/globalstyles';
 
-export default function TextInput({ label, fieldName, first, small, medium, topless, formData, setFormData, onChange, invalidFields = [] }) {
+export default function TextInput({ label, fieldName, first, small, medium, topless, formData, setFormData, onChange, invalidFields = [], disabled = false }) {
   const [error, setError] = useState(false);
 
   const handleChange = (e) => {
@@ -36,6 +36,7 @@ export default function TextInput({ label, fieldName, first, small, medium, topl
         value={formData?.[fieldName] || ''}
         onChange={handleChange} 
         style={{ borderColor: isInvalid ? 'red' : 'initial' }}
+        disabled={disabled}
       />
       {isInvalid && <span style={{ color: 'red' }}>Este campo é obrigatório</span>} 
     </InputLabel>

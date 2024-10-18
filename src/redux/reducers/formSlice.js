@@ -64,22 +64,11 @@ const formSlice = createSlice({
     updateFormData(state, action) {
       state.formData = action.payload;
     },
-    setLookupResponse: (state, action) => {
-      const response = action.payload;
-      if (response && response.numeroProcesso) {
-        state.formData = {
-          ...state.formData,
-          numeroProcesso: response.numeroProcesso || '',
-          autor: response.autor || '', 
-        };
-        state.isValidResponse = true;
-      } else {
-        state.errorMessage = "Processo não encontrado ou dados inválidos.";
-        state.isValidResponse = false;
-      }
-    },
     setIsValidResponse: (state, action) => {
       state.isValidResponse = action.payload;
+    },
+    setEditing: (state) => {
+      state.isEditing = !state.isEditing;
     },
     extraReducers: (builder) => {
       builder.addCase(fetchEscritorio.pending, (state) => {
@@ -111,6 +100,6 @@ export const { setLoading,
   setErrorMessage,
   resetForm,
   updateFormData,
-  setLookupResponse,
-  setIsValidResponse } = formSlice.actions;
+  setIsValidResponse,
+  setEditing } = formSlice.actions;
 export default formSlice.reducer;

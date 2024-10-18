@@ -3,7 +3,7 @@ import { InputLabel, InputMoney } from '../styles/formulario';
 import { GenericP } from '../styles/globalstyles';
 import { NumericFormat } from 'react-number-format';
 
-export default function MoneyImput({ label, fieldName, first, topless, imgW, small, formData, setFormData, value, onChange }) {
+export default function MoneyImput({ label, fieldName, first, topless, imgW, small, formData, setFormData, value, onChange, disabled = false }) {
     
     const handleChange = (values) => {
         const { value: numericValue } = values;
@@ -31,6 +31,7 @@ export default function MoneyImput({ label, fieldName, first, topless, imgW, sma
                 decimalScale={2}
                 fixedDecimalScale={true}
                 customInput={InputMoney}
+                disabled={disabled}
             />
         </InputLabel>
     )

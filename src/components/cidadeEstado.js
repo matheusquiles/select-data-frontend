@@ -13,7 +13,8 @@ export default function EstadoCidadeInput({
     setFormData, 
     required, 
     invalidFields = [], 
-    onChange 
+    onChange,
+    disabled = false
 }) {
     const [estados, setEstados] = useState([]);
     const [cidades, setCidades] = useState([]);
@@ -23,7 +24,6 @@ export default function EstadoCidadeInput({
     const [estadoSelecionado, setEstadoSelecionado] = useState('');
     const [cidadeSelecionada, setCidadeSelecionada] = useState('');
 
-    // Carrega estados ao montar o componente
     useEffect(() => {
         axios.get('https://servicodados.ibge.gov.br/api/v1/localidades/estados')
             .then(response => {
@@ -37,7 +37,6 @@ export default function EstadoCidadeInput({
             });
     }, []);
 
-    // Sincroniza os valores iniciais de estado e cidade do formData
     useEffect(() => {
         if (formData.estado) {
             const estadoEncontrado = estados.find(e => e.nome === formData.estado);
@@ -70,7 +69,7 @@ export default function EstadoCidadeInput({
         const estadoNome = e.target.options[e.target.selectedIndex].text;
 
         setEstadoSelecionado(estadoId);
-        setCidadeSelecionada('');  // Resetar cidade ao trocar estado
+        setCidadeSelecionada('');  
         setFormData((prev) => ({ ...prev, estado: estadoNome, cidadeOrigem: '' }));
 
         if (onChange) onChange({ target: { name: 'estado', value: estadoNome } });
@@ -101,6 +100,7 @@ export default function EstadoCidadeInput({
                     value={estadoSelecionado}
                     style={{ width: '100%', height: '45px' }}
                     required={required}
+                    disabled={disabled}
                 >
                     <option value="">Selecione o Estado</option>
                     {estados.map(({ id, nome }) => (

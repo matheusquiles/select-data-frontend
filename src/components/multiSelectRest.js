@@ -1,10 +1,10 @@
 import React, { useEffect, useCallback, useState } from 'react';
 import axios from 'axios';
-import { InputLabel, StyledSelect, SelectedItem, RemoveButton } from '../styles/formulario'; // Importa os estilos
+import { InputLabel, StyledSelect, SelectedItem, RemoveButton } from '../styles/formulario'; 
 import { GenericP } from '../styles/globalstyles';
 import { API_BASE_URL } from '../helpers/constants';
 
-export default function MultiSelectRest({ label, first, topless, imgW, small, route, id, name, onChange, form, defaultValue, invalidFields }) {
+export default function MultiSelectRest({ label, first, topless, imgW, small, route, id, name, onChange, form, defaultValue, invalidFields, disabled = false }) {
   const [isLoading, setIsLoading] = useState(true);
   const [options, setOptions] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
@@ -20,20 +20,11 @@ export default function MultiSelectRest({ label, first, topless, imgW, small, ro
     }
   }, [route, id, name]);
 
-  // useEffect(() => {
-  //   getData();
-
-  //   if (defaultValue && defaultValue.length > 0) {
-  //     setSelectedItems(defaultValue);
-  //      onChange(defaultValue.map(item => ({ idTipoPedido: item.id })));
-  //   }
-  // }, [getData, defaultValue, onChange]);
 
   useEffect(() => {
     getData();
-  }, [getData]); // OK
+  }, [getData]); 
   
-  // Se a função onChange for usada como dependência, evite isso:
   useEffect(() => {
     if (defaultValue && defaultValue.length > 0) {
       setSelectedItems(defaultValue);
@@ -69,8 +60,7 @@ export default function MultiSelectRest({ label, first, topless, imgW, small, ro
       <InputLabel first={first} topless={topless} imgW={imgW} small={small} style={{ borderColor: isInvalid ? 'red' : 'inherit' }}>
         <GenericP>{label}:</GenericP>
 
-        {/* Dropdown de seleção */}
-        <StyledSelect onChange={handleSelect} value="">
+        <StyledSelect onChange={handleSelect} value="" disabled={disabled}>
           <option value="">{`Selecione`}</option>
           {options.map(({ id, name }) => (
             <option key={id} value={id} disabled={selectedItems.some(item => item.id === id)}>
@@ -79,7 +69,6 @@ export default function MultiSelectRest({ label, first, topless, imgW, small, ro
           ))}
         </StyledSelect>
 
-        {/* Lista de itens selecionados abaixo */}
         <div style={{ marginTop: '10px' }}>
           {selectedItems.map(item => (
             <SelectedItem key={item.id}>

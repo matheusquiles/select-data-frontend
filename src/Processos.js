@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { setErrorMessage, setFormData, setIsValidResponse, setSelectedPedidos, resetForm } from './redux/reducers/formSlice';
+import { setErrorMessage, setFormData, setIsValidResponse, setSelectedPedidos, resetForm, setEditing } from './redux/reducers/formSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import Input from './components/input.js';
 import SelectRest from './components/selectRest.js';
@@ -28,6 +28,7 @@ const ConsultarProcesso = () => {
     const loading = useSelector((state) => state.form.loading);
     const formData = useSelector((state) => state.form.formData);
     const invalidFields = useSelector((state) => state.form.invalidFields);
+    const isEditing  = useSelector((state) => state.form.setEditing);
 
 
     const handleChange = (e) => {
@@ -40,7 +41,8 @@ const ConsultarProcesso = () => {
             selectedItems = [];
         }
         const mappedItems = selectedItems.map(item => ({
-            tipoPedido: item.id
+            tipoPedido: item.id,
+            descricao: item.descricao 
         }));
 
         setSelectedPedidos(mappedItems);
@@ -52,12 +54,22 @@ const ConsultarProcesso = () => {
 
     const [searchValue, setSearchValue] = useState('');
 
+    const handleEditClick = () => {
+        dispatch(setEditing(true));
+    };
+
+    const handleSaveClick = () => {
+        dispatch(setEditing(false));
+    };
+
+
     const handleSearch = async () => {
         dispatch(resetForm());
         try {
             const { data } = await axios.get(`${API_BASE_URL}/processo/buscarProcesso/${searchValue}`);
 
             if (data && data.numeroProcesso) {
+                const pedidos = data.pedido || [];
                 dispatch(setFormData({
                     numeroProcesso: data.numeroProcesso,
                     autor: data.autor || '',
@@ -84,6 +96,10 @@ const ConsultarProcesso = () => {
                     dataDepositoRecursalRevista: data.dataDepositoRecursalRevista || '',
                     depositoJudicial: data.depositoJudicial || '',
                     dataDepositoJudicial: data.dataDepositoJudicial || '',
+                    pedidos: pedidos.map(pedido => ({
+                        idTipoPedido: pedido.idPedido, 
+                        descricao: pedido.descricao
+                    })),
                 }));
                 dispatch(setIsValidResponse(true));
             } else {
@@ -186,6 +202,7 @@ const ConsultarProcesso = () => {
                                     form={formData}
                                     invalidFields={invalidFields}
                                     loading={loading}
+                                    disabled={!isEditing}
                                 />
                                 <Input
                                     label="Nº do Processo"
@@ -194,6 +211,7 @@ const ConsultarProcesso = () => {
                                     setFormData={setFormData}
                                     value={formData.numeroProcesso || ''}
                                     invalidFields={invalidFields}
+                                    disabled={!isEditing}
                                 />
                                 <Input
                                     label="Réu"
@@ -201,6 +219,7 @@ const ConsultarProcesso = () => {
                                     formData={formData}
                                     setFormData={setFormData}
                                     onChange={handleChange}
+                                    disabled={!isEditing}
                                 />
                             </F.InputLine>
 
@@ -215,6 +234,7 @@ const ConsultarProcesso = () => {
                                     form={formData}
                                     invalidFields={invalidFields}
                                     loading={loading}
+                                    disabled={!isEditing}
                                 />
                                 <Input
                                     label="Autor"
@@ -223,6 +243,7 @@ const ConsultarProcesso = () => {
                                     setFormData={setFormData}
                                     onChange={handleChange}
                                     invalidFields={invalidFields}
+                                    disabled={!isEditing}
                                 />
                                 <Input
                                     label="Reclamada"
@@ -230,6 +251,7 @@ const ConsultarProcesso = () => {
                                     formData={formData}
                                     setFormData={setFormData}
                                     onChange={handleChange}
+                                    disabled={!isEditing}
                                 />
                             </F.InputLine>
 
@@ -244,6 +266,7 @@ const ConsultarProcesso = () => {
                                     defaultValue=""
                                     invalidFields={invalidFields}
                                     loading={loading}
+                                    disabled={!isEditing}
                                 />
                                 <SelectRest
                                     label="Classificação de Risco"
@@ -255,6 +278,7 @@ const ConsultarProcesso = () => {
                                     defaultValue=""
                                     invalidFields={invalidFields}
                                     loading={loading}
+                                    disabled={!isEditing}
                                 />
                                 <SelectRest
                                     label="Função"
@@ -266,6 +290,7 @@ const ConsultarProcesso = () => {
                                     defaultValue=""
                                     invalidFields={invalidFields}
                                     loading={loading}
+                                    disabled={!isEditing}
                                 />
                             </F.InputLine>
 
@@ -280,6 +305,7 @@ const ConsultarProcesso = () => {
                                     defaultValue=""
                                     invalidFields={invalidFields}
                                     loading={loading}
+                                    disabled={!isEditing}
                                 />
                                 <SelectRest
                                     label="Tipo de Ação"
@@ -291,6 +317,7 @@ const ConsultarProcesso = () => {
                                     defaultValue=""
                                     invalidFields={invalidFields}
                                     loading={loading}
+                                    disabled={!isEditing}
                                 />
                             </F.MediumInputLine>
 
@@ -305,6 +332,7 @@ const ConsultarProcesso = () => {
                                     defaultValue=""
                                     invalidFields={invalidFields}
                                     loading={loading}
+                                    disabled={!isEditing}
                                 />
                                 <DateImput
                                     label="Data de Ajuizamento"
@@ -313,13 +341,15 @@ const ConsultarProcesso = () => {
                                     value={formData.dataAjuizamento || ''} 
                                     setFormData={setFormData}
                                     onChange={handleChange}
+                                    disabled={!isEditing}
                                 />
                                 <MoneyImput
                                     label="Valor da Causa"
                                     imgW fieldName="valorCausa"
                                     value={formData.valorCausa || ''}
                                     setFormData={setFormData}
-                                    onChange={handleChange} />
+                                    onChange={handleChange}
+                                    disabled={!isEditing} />
                             </F.MediumInputLine>
 
                             <F.MediumInputLine>
@@ -329,6 +359,7 @@ const ConsultarProcesso = () => {
                                     formData={formData}
                                     setFormData={setFormData}
                                     onChange={handleChange}
+                                    disabled={!isEditing}
                                 />
                             </F.MediumInputLine>
 
@@ -340,6 +371,7 @@ const ConsultarProcesso = () => {
                                     setFormData={setFormData}
                                     onChange={handleChange}
                                     invalidFields={invalidFields}
+                                    disabled={!isEditing}
                                 />
                             </F.InputLine>
 
@@ -351,9 +383,10 @@ const ConsultarProcesso = () => {
                                     name='descricao'
                                     onChange={handleMultiSelectChange}
                                     form={formData}
-                                    defaultValue={[]}
+                                    defaultValue={formData.pedidos || ''}
                                     invalidFields={invalidFields}
                                     loading={loading}
+                                    disabled={!isEditing}
                                 />
                             </F.MediumInputLine>
 
@@ -365,6 +398,7 @@ const ConsultarProcesso = () => {
                                     value={formData.admissao || ''} 
                                     setFormData={setFormData}
                                     onChange={handleChange}
+                                    disabled={!isEditing}
                                 />
                                 <DateImput
                                     label="Data Demissão"
@@ -372,6 +406,7 @@ const ConsultarProcesso = () => {
                                     value={formData.demissao || ''} 
                                     setFormData={setFormData}
                                     onChange={handleChange}
+                                    disabled={!isEditing}
                                 />
                             </F.SmallInputLine>
 
@@ -383,6 +418,7 @@ const ConsultarProcesso = () => {
                                     value={formData.depositoRecursalOrdinario || ''}
                                     setFormData={setFormData}
                                     onChange={handleChange}
+                                    disabled={!isEditing}
                                 />
                                 <DateImput
                                     label="Data Recurso Ordinário"
@@ -390,6 +426,7 @@ const ConsultarProcesso = () => {
                                     value={formData.dataDepositoRecursalOrdinario || ''} 
                                     setFormData={setFormData}
                                     onChange={handleChange}
+                                    disabled={!isEditing}
                                     />
                             </F.SmallInputLine>
 
@@ -401,6 +438,7 @@ const ConsultarProcesso = () => {
                                     value={formData.depositoRecursalRevista || ''} 
                                     setFormData={setFormData}
                                     onChange={handleChange}
+                                    disabled={!isEditing}
                                 />
                                 <DateImput
                                     label="Data Recurso Revista"
@@ -408,6 +446,7 @@ const ConsultarProcesso = () => {
                                     value={formData.dataDepositoRecursalRevista || ''} 
                                     setFormData={setFormData}
                                     onChange={handleChange}
+                                    disabled={!isEditing}
                                 />
                             </F.SmallInputLine>
 
@@ -419,6 +458,7 @@ const ConsultarProcesso = () => {
                                     value={formData.depositoJudicial || ''} 
                                     setFormData={setFormData}
                                     onChange={handleChange}
+                                    disabled={!isEditing}
                                 />
                                 <DateImput
                                     label="Data do Depósito Judicial"
@@ -426,11 +466,18 @@ const ConsultarProcesso = () => {
                                     value={formData.dataDepositoRecursalRevista || ''} 
                                     setFormData={setFormData}
                                     onChange={handleChange}
+                                    disabled={!isEditing}
                                 />
                             </F.SmallInputLine>
 
                         </F.InputLine>
                     </Box>
+                </Box>
+
+                <Box sx={{ display: 'flex', minHeight: '10dvh' }}>
+
+
+
                 </Box>
             </CssVarsProvider>
         </form>

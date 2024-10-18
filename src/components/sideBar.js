@@ -109,7 +109,7 @@ export default function Sidebar({ setActiveComponent }) {
             <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
                 <Typography
                     level="body-lg"
-                    sx={{ flex: '1', minWidth: '100px', maxWidth: '200px', fontSize: '24px', fontWeight: 'bold'}}>
+                    sx={{ flex: '1', minWidth: '100px', maxWidth: '200px', fontSize: '28px', fontWeight: 'bold'}}>
                     Select Data
                 </Typography>
                 <ColorSchemeToggle sx={{ ml: 'auto' }} />
@@ -137,18 +137,20 @@ export default function Sidebar({ setActiveComponent }) {
                 >
                     <ListItem>
                         <ListItemButton>
-                            <HomeRoundedIcon />
+                            <HomeRoundedIcon sx={{ fontSize: '24px', color: 'primary.main' }}/>
                             <ListItemContent>
-                                <Typography level="title-sm">Início</Typography>
+                                <Typography level="title-sm" sx={{fontSize: '18px'}}
+                                >Início </Typography>
                             </ListItemContent>
                         </ListItemButton>
                     </ListItem>
 
                     <ListItem>
                         <ListItemButton>
-                            <DashboardRoundedIcon />
+                            <DashboardRoundedIcon sx={{ fontSize: '24px', color: 'primary.main' }}/>
                             <ListItemContent>
-                                <Typography level="title-sm">Dashboard</Typography>
+                                <Typography level="title-sm" sx={{fontSize: '18px'}}>
+                                    Dashboard</Typography>
                             </ListItemContent>
                         </ListItemButton>
                     </ListItem>
@@ -157,9 +159,10 @@ export default function Sidebar({ setActiveComponent }) {
                         <Toggler
                             renderToggle={({ open, setOpen }) => (
                                 <ListItemButton onClick={() => setOpen(!open)}>
-                                    <AssignmentRoundedIcon />
+                                    <AssignmentRoundedIcon sx={{ fontSize: '24px', color: 'primary.main' }}/>
                                     <ListItemContent>
-                                        <Typography level="title-sm">Processos</Typography>
+                                        <Typography level="title-sm" sx={{fontSize: '18px'}}>
+                                            Processos</Typography>
                                     </ListItemContent>
                                     <KeyboardArrowDownIcon
                                         sx={{ transform: open ? 'rotate(180deg)' : 'none' }}
@@ -167,9 +170,9 @@ export default function Sidebar({ setActiveComponent }) {
                                 </ListItemButton>
                             )}
                         >
-                            <List sx={{ gap: 0.5 }}>
-                                <ListItem sx={{ mt: 0.5 }}>
-                                    <ListItemButton onClick={() => handleMenuClick(<CadastroProcesso />)}>
+                            <List sx={{ gap: 0.5, fontSize: '16px' }}>
+                                <ListItem sx={{ mt: 0.5}}>
+                                    <ListItemButton onClick={() => handleMenuClick(<CadastroProcesso />) } >
                                         Novo Processo
                                     </ListItemButton>
                                 </ListItem>
@@ -183,9 +186,10 @@ export default function Sidebar({ setActiveComponent }) {
                         <Toggler
                             renderToggle={({ open, setOpen }) => (
                                 <ListItemButton onClick={() => setOpen(!open)}>
-                                    <GroupRoundedIcon />
+                                    <GroupRoundedIcon sx={{ fontSize: '24px', color: 'primary.main' }}/>
                                     <ListItemContent>
-                                        <Typography level="title-sm">Usuários</Typography>
+                                        <Typography level="title-sm" sx={{fontSize: '18px'}}>
+                                            Usuários</Typography>
                                     </ListItemContent>
                                     <KeyboardArrowDownIcon
                                         sx={[
@@ -201,7 +205,7 @@ export default function Sidebar({ setActiveComponent }) {
                                 </ListItemButton>
                             )}
                         >
-                            <List sx={{ gap: 0.5 }}>
+                            <List sx={{ gap: 0.5, fontSize: '16px' }}>
                                 <ListItem sx={{ mt: 0.5 }}>
                                     <ListItemButton
                                         role="menuitem"
@@ -231,13 +235,13 @@ export default function Sidebar({ setActiveComponent }) {
                         mb: 2,
                     }}
                 >
-                    <ListItem>
+                    <ListItem sx={{fontSize: '16px'}}> 
                         <ListItemButton>
                             <SupportRoundedIcon />
                             Ajuda
                         </ListItemButton>
                     </ListItem>
-                    <ListItem>
+                    <ListItem sx={{fontSize: '16px'}}>
                         <ListItemButton>
                             <SettingsRoundedIcon />
                             Configurações
@@ -253,14 +257,14 @@ export default function Sidebar({ setActiveComponent }) {
                     src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=286"
                 />
                 <Box sx={{ minWidth: 0, flex: 1 }}>
-                    <Typography level="title-sm">Tiago F.</Typography>
-                    <Typography level="body-xs">tfitarelli@test.com</Typography>
+                    <Typography level="title-sm" sx={{fontSize: '18px'}}>Tiago Fittarelli</Typography>
+                    <Typography level="body-xs" sx={{fontSize: '14px'}}>tfitarelli@test.com</Typography>
                 </Box>
                 <IconButton
-                    size="sm"
+                    size="lg"
                     variant="plain"
                     color="neutral"
-                    sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '4px' }}>
+                    sx={{ width: '20px', height: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     <LogoutRoundedIcon sx={{ flex: '1', minWidth: '20px', maxWidth: '20px' }}/>
                 </IconButton>
             </Box>
