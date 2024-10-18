@@ -3,21 +3,32 @@ import axios from 'axios';
 import { InputLabel, StyledSelect, InputWrapper } from '../styles/formulario';
 import { GenericP } from '../styles/globalstyles';
 
-export default function EstadoCidadeInput({ label, first, topless, imgW, small, formData, setFormData, required, invalidFields = [], onChange }) {
+export default function EstadoCidadeInput({ 
+    label, 
+    first, 
+    topless, 
+    imgW, 
+    small, 
+    formData, 
+    setFormData, 
+    required, 
+    invalidFields = [], 
+    onChange 
+}) {
     const [estados, setEstados] = useState([]);
     const [cidades, setCidades] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingCidades, setIsLoadingCidades] = useState(false);
 
-    // Sincronizar valores iniciais de estado e cidade
-    const [estadoSelecionado, setEstadoSelecionado] = useState(formData.estado || '');
-    const [cidadeSelecionada, setCidadeSelecionada] = useState(formData.cidade || '');
+    const [estadoSelecionado, setEstadoSelecionado] = useState('');
+    const [cidadeSelecionada, setCidadeSelecionada] = useState('');
 
+    // Carrega estados ao montar o componente
     useEffect(() => {
-        // Carrega estados do IBGE
         axios.get('https://servicodados.ibge.gov.br/api/v1/localidades/estados')
             .then(response => {
-                setEstados(response.data.sort((a, b) => a.nome.localeCompare(b.nome)));
+                const estadosOrdenados = response.data.sort((a, b) => a.nome.localeCompare(b.nome));
+                setEstados(estadosOrdenados);
                 setIsLoading(false);
             })
             .catch(error => {
@@ -26,25 +37,26 @@ export default function EstadoCidadeInput({ label, first, topless, imgW, small, 
             });
     }, []);
 
-    const handleEstadoChange = (e) => {
-        const estadoId = e.target.value;
-        const estadoNome = e.target.options[e.target.selectedIndex].text;
-
-        setEstadoSelecionado(estadoId);
-        setCidadeSelecionada(''); // Limpar cidade ao trocar o estado
-
-        // Atualizar estado no formData
-        setFormData((prev) => ({ ...prev, estado: estadoNome, cidade: '' }));
-
-        if (onChange) {
-            onChange({ target: { name: 'estado', value: estadoNome } });
+    // Sincroniza os valores iniciais de estado e cidade do formData
+    useEffect(() => {
+        if (formData.estado) {
+            const estadoEncontrado = estados.find(e => e.nome === formData.estado);
+            if (estadoEncontrado) {
+                setEstadoSelecionado(estadoEncontrado.id);
+                carregarCidades(estadoEncontrado.id, formData.cidadeOrigem);
+            }
         }
+    }, [formData, estados]);
 
-        // Carregar cidades para o estado selecionado
+    const carregarCidades = (estadoId, cidadeInicial = '') => {
         setIsLoadingCidades(true);
         axios.get(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${estadoId}/municipios`)
             .then(response => {
-                setCidades(response.data.sort((a, b) => a.nome.localeCompare(b.nome)));
+                const cidadesOrdenadas = response.data.sort((a, b) => a.nome.localeCompare(b.nome));
+                setCidades(cidadesOrdenadas);
+                if (cidadeInicial) {
+                    setCidadeSelecionada(cidadeInicial);
+                }
                 setIsLoadingCidades(false);
             })
             .catch(error => {
@@ -53,17 +65,26 @@ export default function EstadoCidadeInput({ label, first, topless, imgW, small, 
             });
     };
 
+    const handleEstadoChange = (e) => {
+        const estadoId = e.target.value;
+        const estadoNome = e.target.options[e.target.selectedIndex].text;
+
+        setEstadoSelecionado(estadoId);
+        setCidadeSelecionada('');  // Resetar cidade ao trocar estado
+        setFormData((prev) => ({ ...prev, estado: estadoNome, cidadeOrigem: '' }));
+
+        if (onChange) onChange({ target: { name: 'estado', value: estadoNome } });
+
+        carregarCidades(estadoId);
+    };
+
     const handleCidadeChange = (e) => {
         const cidadeNome = e.target.value;
 
         setCidadeSelecionada(cidadeNome);
+        setFormData((prev) => ({ ...prev, cidadeOrigem: cidadeNome }));
 
-        // Atualizar cidade no formData
-        setFormData((prev) => ({ ...prev, cidade: cidadeNome }));
-
-        if (onChange) {
-            onChange({ target: { name: 'cidade', value: cidadeNome } });
-        }
+        if (onChange) onChange({ target: { name: 'cidadeOrigem', value: cidadeNome } });
     };
 
     const isInvalid = (field) => invalidFields.includes(field);
