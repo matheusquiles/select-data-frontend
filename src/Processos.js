@@ -317,7 +317,7 @@ const ConsultarProcesso = () => {
                                 <MoneyImput
                                     label="Valor da Causa"
                                     imgW fieldName="valorCausa"
-                                    valur={formData.valorCausa || ''}
+                                    value={formData.valorCausa || ''}
                                     setFormData={setFormData}
                                     onChange={handleChange} />
                             </F.MediumInputLine>
@@ -380,6 +380,7 @@ const ConsultarProcesso = () => {
                                     label="Depósito Recurso Ordinário"
                                     first fieldName="depositoRecursalOrdinario"
                                     formData={formData}
+                                    value={formData.depositoRecursalOrdinario || ''}
                                     setFormData={setFormData}
                                     onChange={handleChange}
                                 />
@@ -389,7 +390,7 @@ const ConsultarProcesso = () => {
                                     value={formData.dataDepositoRecursalOrdinario || ''} 
                                     setFormData={setFormData}
                                     onChange={handleChange}
-                                />
+                                    />
                             </F.SmallInputLine>
 
                             <F.SmallInputLine>
@@ -397,6 +398,7 @@ const ConsultarProcesso = () => {
                                     label="Depósito Recurso Revista"
                                     first fieldName="depositoRecursalRevista"
                                     formData={formData}
+                                    value={formData.depositoRecursalRevista || ''} 
                                     setFormData={setFormData}
                                     onChange={handleChange}
                                 />
@@ -414,6 +416,7 @@ const ConsultarProcesso = () => {
                                     label="Depósito Judicial"
                                     first fieldName="depositoJudicial"
                                     formData={formData}
+                                    value={formData.depositoJudicial || ''} 
                                     setFormData={setFormData}
                                     onChange={handleChange}
                                 />

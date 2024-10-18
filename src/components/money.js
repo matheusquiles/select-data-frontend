@@ -6,15 +6,13 @@ import { NumericFormat } from 'react-number-format';
 export default function MoneyImput({ label, fieldName, first, topless, imgW, small, formData, setFormData, value, onChange }) {
     
     const handleChange = (values) => {
-        const { value: numericValue } = values; // Renomeia para evitar conflito com prop "value"
+        const { value: numericValue } = values;
         
-        // Atualiza o estado global (Redux ou estado local)
         setFormData((prevFormData) => ({
           ...prevFormData,
           [fieldName]: numericValue,
         }));
     
-        // Chama o onChange se for passado
         if (onChange) {
           onChange({ target: { name: fieldName, value: numericValue } });
         }

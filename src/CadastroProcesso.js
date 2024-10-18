@@ -10,7 +10,7 @@ import MoneyImput from './components/money.js';
 import * as F from './styles/formulario.jsx';
 import EstadoCidadeInput from './components/cidadeEstado.js';
 import MultiSelectRest from './components/multiSelectRest.js';
-import { API_BASE_URL } from './helpers/constants.js'; 
+import { API_BASE_URL } from './helpers/constants.js';
 
 import { CssVarsProvider } from '@mui/joy/styles';
 import CssBaseline from '@mui/joy/CssBaseline';
@@ -284,7 +284,7 @@ const CadastroProcesso = () => {
                       form={formData}
                       defaultValue=""
                       invalidFields={invalidFields}
-                      loading={loading} 
+                      loading={loading}
                     />
                     <SelectRest
                       label="Classificação de Risco"
@@ -306,7 +306,7 @@ const CadastroProcesso = () => {
                       form={formData}
                       defaultValue=""
                       invalidFields={invalidFields}
-                      loading={loading} 
+                      loading={loading}
                     />
                   </F.InputLine>
 
@@ -320,7 +320,7 @@ const CadastroProcesso = () => {
                       form={formData}
                       defaultValue=""
                       invalidFields={invalidFields}
-                      loading={loading} 
+                      loading={loading}
                     />
                     <SelectRest
                       label="Tipo de Ação"
@@ -349,8 +349,9 @@ const CadastroProcesso = () => {
                     />
                     <DateImput
                       label="Data de Ajuizamento"
-                      small fieldName="dataAjuizamento"
-                      formData={formData}
+                      small
+                      fieldName="dataAjuizamento"
+                      value={formData.dataAjuizamento || ''}
                       setFormData={setFormData}
                       onChange={handleChange}
                     />
@@ -402,12 +403,14 @@ const CadastroProcesso = () => {
                       label="Data Admissão"
                       fieldName="admissao"
                       first formData={formData}
+                      value={formData.admissao || ''}
                       setFormData={setFormData}
                       onChange={handleChange}
                     />
                     <DateImput
                       label="Data Demissão"
                       fieldName="demissao"
+                      value={formData.demissao || ''}
                       formData={formData}
                       setFormData={setFormData}
                       onChange={handleChange}
@@ -426,6 +429,7 @@ const CadastroProcesso = () => {
                       label="Data Recurso Ordinário"
                       fieldName="dataDepositoRecursalOrdinario"
                       formData={formData}
+                      value={formData.dataDepositoRecursalOrdinario || ''}
                       setFormData={setFormData}
                       onChange={handleChange}
                     />
@@ -443,6 +447,7 @@ const CadastroProcesso = () => {
                       label="Data Recurso Revista"
                       fieldName="dataDepositoRecursalRevista"
                       formData={formData}
+                      value={formData.dataDepositoRecursalRevista || ''}
                       setFormData={setFormData}
                       onChange={handleChange}
                     />
@@ -460,6 +465,7 @@ const CadastroProcesso = () => {
                       label="Data do Depósito Judicial"
                       fieldName="dataDepositoJudicial"
                       formData={formData}
+                      value={formData.dataDepositoJudicial || ''}
                       setFormData={setFormData}
                       onChange={handleChange}
                     />

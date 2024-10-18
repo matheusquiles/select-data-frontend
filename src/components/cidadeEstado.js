@@ -2,17 +2,19 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { InputLabel, StyledSelect, InputWrapper } from '../styles/formulario';
 import { GenericP } from '../styles/globalstyles';
-import PropTypes from 'prop-types';
 
 export default function EstadoCidadeInput({ label, first, topless, imgW, small, formData, setFormData, required, invalidFields = [], onChange }) {
     const [estados, setEstados] = useState([]);
     const [cidades, setCidades] = useState([]);
-    const [estadoSelecionado, setEstadoSelecionado] = useState(formData.estado || '');
-    const [cidadeSelecionada, setCidadeSelecionada] = useState(formData.cidade || '');
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingCidades, setIsLoadingCidades] = useState(false);
 
+    // Sincronizar valores iniciais de estado e cidade
+    const [estadoSelecionado, setEstadoSelecionado] = useState(formData.estado || '');
+    const [cidadeSelecionada, setCidadeSelecionada] = useState(formData.cidade || '');
+
     useEffect(() => {
+        // Carrega estados do IBGE
         axios.get('https://servicodados.ibge.gov.br/api/v1/localidades/estados')
             .then(response => {
                 setEstados(response.data.sort((a, b) => a.nome.localeCompare(b.nome)));
@@ -26,16 +28,19 @@ export default function EstadoCidadeInput({ label, first, topless, imgW, small, 
 
     const handleEstadoChange = (e) => {
         const estadoId = e.target.value;
-        const estadoNome = e.target.options[e.target.selectedIndex].text; 
-        setEstadoSelecionado(estadoId); 
-        setCidadeSelecionada(''); 
-        setFormData({ ...formData, estado: estadoNome, cidade: '' }); 
+        const estadoNome = e.target.options[e.target.selectedIndex].text;
 
-        // Chama a função onChange passada como prop
+        setEstadoSelecionado(estadoId);
+        setCidadeSelecionada(''); // Limpar cidade ao trocar o estado
+
+        // Atualizar estado no formData
+        setFormData((prev) => ({ ...prev, estado: estadoNome, cidade: '' }));
+
         if (onChange) {
             onChange({ target: { name: 'estado', value: estadoNome } });
         }
 
+        // Carregar cidades para o estado selecionado
         setIsLoadingCidades(true);
         axios.get(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${estadoId}/municipios`)
             .then(response => {
@@ -49,11 +54,13 @@ export default function EstadoCidadeInput({ label, first, topless, imgW, small, 
     };
 
     const handleCidadeChange = (e) => {
-        const cidadeNome = e.target.options[e.target.selectedIndex].text; 
-        setCidadeSelecionada(cidadeNome);
-        setFormData({ ...formData, cidade: cidadeNome }); 
+        const cidadeNome = e.target.value;
 
-        // Chama a função onChange passada como prop
+        setCidadeSelecionada(cidadeNome);
+
+        // Atualizar cidade no formData
+        setFormData((prev) => ({ ...prev, cidade: cidadeNome }));
+
         if (onChange) {
             onChange({ target: { name: 'cidade', value: cidadeNome } });
         }
@@ -63,11 +70,14 @@ export default function EstadoCidadeInput({ label, first, topless, imgW, small, 
 
     return (
         <InputWrapper>
-            <InputLabel style={{ flexBasis: '30%', color: isInvalid('estado') ? 'red' : 'inherit' }} first={first} topless={topless} imgW={imgW} small={small}>
+            <InputLabel
+                style={{ flexBasis: '30%', color: isInvalid('estado') ? 'red' : 'inherit' }}
+                first={first} topless={topless} imgW={imgW} small={small}
+            >
                 <GenericP>{label} Estado:</GenericP>
-                <StyledSelect 
-                    onChange={handleEstadoChange} 
-                    value={estadoSelecionado} 
+                <StyledSelect
+                    onChange={handleEstadoChange}
+                    value={estadoSelecionado}
                     style={{ width: '100%', height: '45px' }}
                     required={required}
                 >
@@ -80,11 +90,14 @@ export default function EstadoCidadeInput({ label, first, topless, imgW, small, 
                 </StyledSelect>
             </InputLabel>
 
-            <InputLabel style={{ flexBasis: '70%', color: isInvalid('cidade') ? 'red' : 'inherit' }} first={first} topless={topless} imgW={imgW} small={small}>
+            <InputLabel
+                style={{ flexBasis: '70%', color: isInvalid('cidade') ? 'red' : 'inherit' }}
+                first={first} topless={topless} imgW={imgW} small={small}
+            >
                 <GenericP>Cidade:</GenericP>
-                <StyledSelect 
-                    onChange={handleCidadeChange} 
-                    value={cidadeSelecionada} 
+                <StyledSelect
+                    onChange={handleCidadeChange}
+                    value={cidadeSelecionada}
                     disabled={!estadoSelecionado || isLoadingCidades}
                     style={{ width: '100%', height: '45px' }}
                     required={required}
@@ -100,26 +113,3 @@ export default function EstadoCidadeInput({ label, first, topless, imgW, small, 
         </InputWrapper>
     );
 }
-
-EstadoCidadeInput.propTypes = {
-    label: PropTypes.string.isRequired,
-    first: PropTypes.bool,
-    topless: PropTypes.bool,
-    imgW: PropTypes.bool,
-    small: PropTypes.bool,
-    formData: PropTypes.object.isRequired,
-    setFormData: PropTypes.func.isRequired,
-    required: PropTypes.bool,
-    invalidFields: PropTypes.array,
-    onChange: PropTypes.func,
-};
-
-EstadoCidadeInput.defaultProps = {
-    first: false,
-    topless: false,
-    imgW: false,
-    small: false,
-    required: false,
-    invalidFields: [],
-    onChange: () => {},
-};

@@ -20,14 +20,26 @@ export default function MultiSelectRest({ label, first, topless, imgW, small, ro
     }
   }, [route, id, name]);
 
+  // useEffect(() => {
+  //   getData();
+
+  //   if (defaultValue && defaultValue.length > 0) {
+  //     setSelectedItems(defaultValue);
+  //      onChange(defaultValue.map(item => ({ idTipoPedido: item.id })));
+  //   }
+  // }, [getData, defaultValue, onChange]);
+
   useEffect(() => {
     getData();
-
+  }, [getData]); // OK
+  
+  // Se a função onChange for usada como dependência, evite isso:
+  useEffect(() => {
     if (defaultValue && defaultValue.length > 0) {
       setSelectedItems(defaultValue);
-       onChange(defaultValue.map(item => ({ idTipoPedido: item.id })));
+      onChange(defaultValue.map(item => ({ idTipoPedido: item.id })));
     }
-  }, [getData, defaultValue, onChange]);
+  }, [defaultValue]);
 
 
   const handleSelect = ({ target: { value } }) => {

@@ -26,7 +26,7 @@ const formatDateForInput = (isoDate) => {
     value 
   }) {
     const handleChange = ({ target: { value } }) => {
-      const formattedValue = formatDateForApi(value); 
+      const formattedValue = formatDateForApi(value); // Converte para ISO ao enviar
       setFormData((prevFormData) => ({
         ...prevFormData,
         [fieldName]: formattedValue,
