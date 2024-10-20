@@ -19,6 +19,7 @@ import Box from '@mui/joy/Box';
 import Breadcrumbs from '@mui/joy/Breadcrumbs';
 import Link from '@mui/joy/Link';
 import Typography from '@mui/joy/Typography';
+import Button from '@mui/joy/Button';
 
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
@@ -28,7 +29,7 @@ const ConsultarProcesso = () => {
     const loading = useSelector((state) => state.form.loading);
     const formData = useSelector((state) => state.form.formData);
     const invalidFields = useSelector((state) => state.form.invalidFields);
-    const isEditing  = useSelector((state) => state.form.setEditing);
+    const isEditing = useSelector((state) => state.form.setEditing);
 
 
     const handleChange = (e) => {
@@ -42,20 +43,22 @@ const ConsultarProcesso = () => {
         }
         const mappedItems = selectedItems.map(item => ({
             tipoPedido: item.id,
-            descricao: item.descricao 
+            descricao: item.descricao
         }));
 
         setSelectedPedidos(mappedItems);
     };
 
-    useEffect(() => {   
+    useEffect(() => {
         dispatch(resetForm());
     }, [dispatch]);
 
     const [searchValue, setSearchValue] = useState('');
 
     const handleEditClick = () => {
-        dispatch(setEditing(true));
+        console.log("Antes:", isEditing); // Mostra o valor atual
+        dispatch(setEditing());
+        console.log("Depois:", !isEditing); // Mostra o valor após a troca
     };
 
     const handleSaveClick = () => {
@@ -86,7 +89,7 @@ const ConsultarProcesso = () => {
                     valorCausa: data.valorCausa || '',
                     dataAjuizamento: data.dataAjuizamento || '',
                     estado: data.estado || '',
-                    cidade: data.cidade || '',
+                    cidadeOrigem: data.cidadeOrigem || '',
                     ultimosAndamentosProcessuais: data.ultimosAndamentosProcessuais || '',
                     admissao: data.admissao || '',
                     demissao: data.demissao || '',
@@ -97,7 +100,7 @@ const ConsultarProcesso = () => {
                     depositoJudicial: data.depositoJudicial || '',
                     dataDepositoJudicial: data.dataDepositoJudicial || '',
                     pedidos: pedidos.map(pedido => ({
-                        idTipoPedido: pedido.idPedido, 
+                        idTipoPedido: pedido.idPedido,
                         descricao: pedido.descricao
                     })),
                 }));
@@ -338,7 +341,7 @@ const ConsultarProcesso = () => {
                                     label="Data de Ajuizamento"
                                     small
                                     fieldName="dataAjuizamento"
-                                    value={formData.dataAjuizamento || ''} 
+                                    value={formData.dataAjuizamento || ''}
                                     setFormData={setFormData}
                                     onChange={handleChange}
                                     disabled={!isEditing}
@@ -360,7 +363,7 @@ const ConsultarProcesso = () => {
                                     setFormData={setFormData}
                                     onChange={handleChange}
                                     disabled={!isEditing}
-                                />
+                                /> 
                             </F.MediumInputLine>
 
                             <F.InputLine>
@@ -395,7 +398,7 @@ const ConsultarProcesso = () => {
                                     label="Data Admissão"
                                     fieldName="admissao"
                                     first formData={formData}
-                                    value={formData.admissao || ''} 
+                                    value={formData.admissao || ''}
                                     setFormData={setFormData}
                                     onChange={handleChange}
                                     disabled={!isEditing}
@@ -403,7 +406,7 @@ const ConsultarProcesso = () => {
                                 <DateImput
                                     label="Data Demissão"
                                     fieldName="demissao"
-                                    value={formData.demissao || ''} 
+                                    value={formData.demissao || ''}
                                     setFormData={setFormData}
                                     onChange={handleChange}
                                     disabled={!isEditing}
@@ -423,11 +426,11 @@ const ConsultarProcesso = () => {
                                 <DateImput
                                     label="Data Recurso Ordinário"
                                     fieldName="dataDepositoRecursalOrdinario"
-                                    value={formData.dataDepositoRecursalOrdinario || ''} 
+                                    value={formData.dataDepositoRecursalOrdinario || ''}
                                     setFormData={setFormData}
                                     onChange={handleChange}
                                     disabled={!isEditing}
-                                    />
+                                />
                             </F.SmallInputLine>
 
                             <F.SmallInputLine>
@@ -435,7 +438,7 @@ const ConsultarProcesso = () => {
                                     label="Depósito Recurso Revista"
                                     first fieldName="depositoRecursalRevista"
                                     formData={formData}
-                                    value={formData.depositoRecursalRevista || ''} 
+                                    value={formData.depositoRecursalRevista || ''}
                                     setFormData={setFormData}
                                     onChange={handleChange}
                                     disabled={!isEditing}
@@ -443,7 +446,7 @@ const ConsultarProcesso = () => {
                                 <DateImput
                                     label="Data Recurso Revista"
                                     fieldName="dataDepositoRecursalRevista"
-                                    value={formData.dataDepositoRecursalRevista || ''} 
+                                    value={formData.dataDepositoRecursalRevista || ''}
                                     setFormData={setFormData}
                                     onChange={handleChange}
                                     disabled={!isEditing}
@@ -455,7 +458,7 @@ const ConsultarProcesso = () => {
                                     label="Depósito Judicial"
                                     first fieldName="depositoJudicial"
                                     formData={formData}
-                                    value={formData.depositoJudicial || ''} 
+                                    value={formData.depositoJudicial || ''}
                                     setFormData={setFormData}
                                     onChange={handleChange}
                                     disabled={!isEditing}
@@ -463,21 +466,32 @@ const ConsultarProcesso = () => {
                                 <DateImput
                                     label="Data do Depósito Judicial"
                                     fieldName="dataDepositoJudicial"
-                                    value={formData.dataDepositoRecursalRevista || ''} 
+                                    value={formData.dataDepositoRecursalRevista || ''}
                                     setFormData={setFormData}
                                     onChange={handleChange}
                                     disabled={!isEditing}
                                 />
                             </F.SmallInputLine>
+                        </F.InputLine>
 
+                        <F.InputLine>
+                            <Box sx={{
+                                display: 'flex',
+                                flexWrap: 'nowrap',
+                                gap: 2,
+                                mt: 3,
+                                mb: 1,
+                                width: '100%',
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                justifyContent: 'flex-end'
+                            }}>
+                                <Button type="button" variant='outlined'>Cancelar</Button>
+                                <Button type="reset" variant='soft' onClick={handleEditClick}>Editar</Button>
+                                <Button type="submit">Atualizar</Button>
+                            </Box>
                         </F.InputLine>
                     </Box>
-                </Box>
-
-                <Box sx={{ display: 'flex', minHeight: '10dvh' }}>
-
-
-
                 </Box>
             </CssVarsProvider>
         </form>

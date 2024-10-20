@@ -12,6 +12,7 @@ const initialState = {
   invalidFields: [],
   errorMessage: '',
   isLoading: false,
+  isEditing: false,
 };
 
 export const fetchEscritorio = createAsyncThunk('form/fetchEscritorio', async () => {
@@ -28,8 +29,8 @@ export const fetchFaseProcessual = createAsyncThunk('form/fetchFaseProcessual', 
 const formSlice = createSlice({
   name: 'form',
   initialState,
-  loading: false,
-  options: {},
+  // loading: false,
+  // options: {},
   errorMessage: '',
   reducers: {
     loading: {

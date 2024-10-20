@@ -119,7 +119,7 @@ export default function EstadoCidadeInput({
                 <StyledSelect
                     onChange={handleCidadeChange}
                     value={cidadeSelecionada}
-                    disabled={!estadoSelecionado || isLoadingCidades}
+                    disabled={!estadoSelecionado || isLoadingCidades || disabled} 
                     style={{ width: '100%', height: '45px' }}
                     required={required}
                 >
