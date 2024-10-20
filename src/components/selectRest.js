@@ -63,7 +63,7 @@ export default function SelectRest({ label, first, medium, topless, small, route
       <InputLabel first={first} medium={medium} topless={topless} small={small} style={{ borderColor: isInvalid ? 'red' : 'inherit' }}>
         <GenericP>{label}:</GenericP>
         <StyledSelect onChange={handleSelect}
-          value={selected}
+          value={selected || ''}
           style={{ borderColor: isInvalid ? 'red' : 'inherit' }}
           disabled={disabled}>
           <option value="">{`Selecione`}</option>

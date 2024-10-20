@@ -4,8 +4,8 @@ import { API_BASE_URL } from '../../helpers/constants';
 
 const initialState = {
   formData: {
-    numeroProcesso: '',
-    autor: '',
+    // numeroProcesso: '',
+    // autor: '',
   },
   selectedPedidos: [],
   options: {},
@@ -70,7 +70,7 @@ const formSlice = createSlice({
     },
     setEditing: (state) => {
       state.isEditing = !state.isEditing;
-    },
+  },
     extraReducers: (builder) => {
       builder.addCase(fetchEscritorio.pending, (state) => {
         state.loading.escritorio = true;

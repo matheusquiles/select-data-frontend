@@ -18,6 +18,7 @@ import Box from '@mui/joy/Box';
 import Breadcrumbs from '@mui/joy/Breadcrumbs';
 import Link from '@mui/joy/Link';
 import Typography from '@mui/joy/Typography';
+import Button from '@mui/joy/Button';
 
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
@@ -139,6 +140,10 @@ const CadastroProcesso = () => {
     } else {
       alert('Por favor, preencha todos os campos obrigatórios.');
     }
+  };
+
+  const handleCancelClick = () => {
+    dispatch(resetForm());
   };
 
   const isLoading = loading && Object.values(loading).some((isLoading) => isLoading);
@@ -475,12 +480,30 @@ const CadastroProcesso = () => {
 
               </Box>
             </Box>
+
+            <F.InputLine>
+              <Box sx={{
+                display: 'flex',
+                flexWrap: 'nowrap',
+                gap: 2,
+                mt: 3,
+                mb: 1,
+                width: '100%',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'flex-end'
+              }}>
+                <Button type="button" variant='outlined' onClick={handleCancelClick}>Cancelar</Button>
+                <Button type="submit" onClick={handleSubmit} >Cadastrar Processo</Button>
+              </Box>
+            </F.InputLine>
+
           </CssVarsProvider>
 
 
           {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>} {/* Exibir mensagem de erro */}
 
-          <button type="submit">Cadastrar Processo</button>
+
         </form >
       )}
     </>

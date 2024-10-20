@@ -29,7 +29,7 @@ const ConsultarProcesso = () => {
     const loading = useSelector((state) => state.form.loading);
     const formData = useSelector((state) => state.form.formData);
     const invalidFields = useSelector((state) => state.form.invalidFields);
-    const isEditing = useSelector((state) => state.form.setEditing);
+    const isEditing = useSelector((state) => state.form.isEditing);
 
 
     const handleChange = (e) => {
@@ -56,12 +56,16 @@ const ConsultarProcesso = () => {
     const [searchValue, setSearchValue] = useState('');
 
     const handleEditClick = () => {
-        console.log("Antes:", isEditing); // Mostra o valor atual
-        dispatch(setEditing());
-        console.log("Depois:", !isEditing); // Mostra o valor após a troca
+        dispatch(setEditing(true));
+        dispatch(setFormData({ ...formData }));
     };
 
     const handleSaveClick = () => {
+        dispatch(setEditing(false));
+    };
+
+    const handleCancelClick = () => {
+        dispatch(resetForm());
         dispatch(setEditing(false));
     };
 
@@ -89,7 +93,7 @@ const ConsultarProcesso = () => {
                     valorCausa: data.valorCausa || '',
                     dataAjuizamento: data.dataAjuizamento || '',
                     estado: data.estado || '',
-                    cidadeOrigem: data.cidadeOrigem || '',
+                    cidade: data.cidade || '',
                     ultimosAndamentosProcessuais: data.ultimosAndamentosProcessuais || '',
                     admissao: data.admissao || '',
                     demissao: data.demissao || '',
@@ -486,9 +490,9 @@ const ConsultarProcesso = () => {
                                 alignItems: 'center',
                                 justifyContent: 'flex-end'
                             }}>
-                                <Button type="button" variant='outlined'>Cancelar</Button>
+                                <Button type="button" variant='outlined' onClick={handleCancelClick}>Cancelar</Button>
                                 <Button type="reset" variant='soft' onClick={handleEditClick}>Editar</Button>
-                                <Button type="submit">Atualizar</Button>
+                                <Button type="submit" disabled={!isEditing}   >Atualizar</Button>
                             </Box>
                         </F.InputLine>
                     </Box>

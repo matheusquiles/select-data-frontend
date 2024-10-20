@@ -42,7 +42,7 @@ export default function EstadoCidadeInput({
             const estadoEncontrado = estados.find(e => e.nome === formData.estado);
             if (estadoEncontrado) {
                 setEstadoSelecionado(estadoEncontrado.id);
-                carregarCidades(estadoEncontrado.id, formData.cidadeOrigem);
+                carregarCidades(estadoEncontrado.id, formData.cidade);
             }
         }
     }, [formData, estados]);
@@ -70,7 +70,7 @@ export default function EstadoCidadeInput({
 
         setEstadoSelecionado(estadoId);
         setCidadeSelecionada('');  
-        setFormData((prev) => ({ ...prev, estado: estadoNome, cidadeOrigem: '' }));
+        setFormData((prev) => ({ ...prev, estado: estadoNome, cidade: '' }));
 
         if (onChange) onChange({ target: { name: 'estado', value: estadoNome } });
 
@@ -81,9 +81,9 @@ export default function EstadoCidadeInput({
         const cidadeNome = e.target.value;
 
         setCidadeSelecionada(cidadeNome);
-        setFormData((prev) => ({ ...prev, cidadeOrigem: cidadeNome }));
+        setFormData((prev) => ({ ...prev, cidade: cidadeNome }));
 
-        if (onChange) onChange({ target: { name: 'cidadeOrigem', value: cidadeNome } });
+        if (onChange) onChange({ target: { name: 'cidade', value: cidadeNome } });
     };
 
     const isInvalid = (field) => invalidFields.includes(field);
