@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { setErrorMessage, setFormData, setIsValidResponse, setSelectedPedidos, resetForm, setEditing } from './redux/reducers/formSlice';
+import { setErrorMessage, setFormData, setIsValidResponse, setSelectedPedidos, resetForm, setEditing, setLoading } from './redux/reducers/formSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import Input from './components/input.js';
 import SelectRest from './components/selectRest.js';
@@ -20,6 +20,7 @@ import Breadcrumbs from '@mui/joy/Breadcrumbs';
 import Link from '@mui/joy/Link';
 import Typography from '@mui/joy/Typography';
 import Button from '@mui/joy/Button';
+import CircularProgress from '@mui/joy/CircularProgress';
 
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
@@ -30,6 +31,7 @@ const ConsultarProcesso = () => {
     const formData = useSelector((state) => state.form.formData);
     const invalidFields = useSelector((state) => state.form.invalidFields);
     const isEditing = useSelector((state) => state.form.isEditing);
+    const isLoading = useSelector((state) => state.form.isLoading);
 
 
     const handleChange = (e) => {
@@ -72,8 +74,10 @@ const ConsultarProcesso = () => {
 
     const handleSearch = async () => {
         dispatch(resetForm());
+        dispatch(setLoading(true));
         try {
             const { data } = await axios.get(`${API_BASE_URL}/processo/buscarProcesso/${searchValue}`);
+            await new Promise((resolve) => setTimeout(resolve, 3000));
 
             if (data && data.numeroProcesso) {
                 const pedidos = data.pedido || [];
@@ -116,6 +120,8 @@ const ConsultarProcesso = () => {
         } catch (error) {
             console.error('Erro ao buscar dados:', error);
             dispatch(setErrorMessage('Erro ao buscar dados.'));
+        } finally {
+            dispatch(setLoading(false));
         }
     };
 
@@ -186,16 +192,29 @@ const ConsultarProcesso = () => {
                                 Buscar Processo
                             </Typography>
                         </Box>
-                        <Box>
-                            <LookupRest
-                                value={searchValue}
-                                first
-                                onChange={setSearchValue}
-                                onSearch={handleSearch}
-                            />
-                        </Box>
+                        <F.InputLine>
+                            <Box>
+                                <LookupRest
+                                    value={searchValue}
+                                    first
+                                    onChange={setSearchValue}
+                                    onSearch={handleSearch}
+                                />
+                            </Box>
 
-                        <Divider />
+                            {isLoading && <CircularProgress sx={{
+                                size: 'sm',
+                                gap: 2,
+                                mt: 2,
+                                mb: 1,
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                justifyContent: 'flex-end'
+                            }} />}
+
+                        </F.InputLine>
+
+                        <Divider sx={{mt: 3}} />
 
                         <F.InputLine column>
                             <F.InputLine>
@@ -367,7 +386,7 @@ const ConsultarProcesso = () => {
                                     setFormData={setFormData}
                                     onChange={handleChange}
                                     disabled={!isEditing}
-                                /> 
+                                />
                             </F.MediumInputLine>
 
                             <F.InputLine>
