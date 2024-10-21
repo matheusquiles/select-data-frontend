@@ -5,7 +5,6 @@ import { setFormData, setOptions, setLoading } from '../redux/reducers/formSlice
 import { InputLabel, StyledSelect } from '../styles/formulario';
 import { GenericP } from '../styles/globalstyles';
 import { API_BASE_URL } from '../helpers/constants';
-import PropTypes from 'prop-types';
 
 export default function SelectRest({ label, first, medium, topless, small, route, id, name, onChange, defaultValue, invalidFields, disabled = false }) {
   const dispatch = useDispatch();

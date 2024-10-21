@@ -108,7 +108,7 @@ const ConsultarProcesso = () => {
                     depositoJudicial: data.depositoJudicial || '',
                     dataDepositoJudicial: data.dataDepositoJudicial || '',
                     pedidos: pedidos.map(pedido => ({
-                        idTipoPedido: pedido.idPedido,
+                        idTipoPedido: pedido.idTipoPedido,
                         descricao: pedido.descricao
                     })),
                 }));
@@ -409,7 +409,7 @@ const ConsultarProcesso = () => {
                                     name='descricao'
                                     onChange={handleMultiSelectChange}
                                     form={formData}
-                                    defaultValue={formData.pedidos || ''}
+                                    defaultValue={formData.pedidos ? formData.pedidos.map(pedido => ({ id: pedido.idTipoPedido, name: pedido.descricao })) : []}
                                     invalidFields={invalidFields}
                                     loading={loading}
                                     disabled={!isEditing}

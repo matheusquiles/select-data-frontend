@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   formData: {},
@@ -56,11 +56,12 @@ const formSlice = createSlice({
     },
     setEditing: (state) => {
       state.isEditing = !state.isEditing;
+    },
   },
-  }
 });
 
-export const { setLoading,
+export const {
+  setLoading,
   setFormData,
   setOptions,
   setSelectedPedidos,
@@ -70,5 +71,6 @@ export const { setLoading,
   updateFormData,
   setIsValidResponse,
   setEditing,
-  setUpdating } = formSlice.actions;
+  setUpdating,
+ } = formSlice.actions;
 export default formSlice.reducer;
