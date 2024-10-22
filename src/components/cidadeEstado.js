@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { InputLabel, StyledSelect, InputWrapper } from '../styles/formulario';
 import { GenericP } from '../styles/globalstyles';
@@ -20,9 +20,9 @@ export default function EstadoCidadeInput({
     const [cidades, setCidades] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingCidades, setIsLoadingCidades] = useState(false);
-
     const [estadoSelecionado, setEstadoSelecionado] = useState('');
     const [cidadeSelecionada, setCidadeSelecionada] = useState('');
+    const debounceRef = useRef(null); 
 
     useEffect(() => {
         axios.get('https://servicodados.ibge.gov.br/api/v1/localidades/estados')
@@ -39,13 +39,16 @@ export default function EstadoCidadeInput({
 
     useEffect(() => {
         if (formData.estado) {
-            const estadoEncontrado = estados.find(e => e.nome === formData.estado);
-            if (estadoEncontrado) {
+            const estadoEncontrado = estados.find((e) => e.nome === formData.estado);
+            if (estadoEncontrado && estadoEncontrado.id !== estadoSelecionado) {
                 setEstadoSelecionado(estadoEncontrado.id);
-                carregarCidades(estadoEncontrado.id, formData.cidade);
+                if (debounceRef.current) clearTimeout(debounceRef.current); // Evita duplicidade
+                debounceRef.current = setTimeout(() => {
+                    carregarCidades(estadoEncontrado.id, formData.cidade);
+                }, 300); // Aguarda 300ms antes de carregar cidades
             }
         }
-    }, [formData, estados]);
+    }, [formData.estado, estados]);
 
     const carregarCidades = (estadoId, cidadeInicial = '') => {
         setIsLoadingCidades(true);
@@ -69,7 +72,7 @@ export default function EstadoCidadeInput({
         const estadoNome = e.target.options[e.target.selectedIndex].text;
 
         setEstadoSelecionado(estadoId);
-        setCidadeSelecionada('');  
+        setCidadeSelecionada('');
         setFormData((prev) => ({ ...prev, estado: estadoNome, cidade: '' }));
 
         if (onChange) onChange({ target: { name: 'estado', value: estadoNome } });

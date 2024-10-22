@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { setErrorMessage, setFormData, setIsValidResponse, setSelectedPedidos, resetForm, setEditing, setLoading } from './redux/reducers/formSlice';
+import { setErrorMessage, setFormData, setIsValidResponse, setSelectedPedidos, resetForm, setEditing, setLoading, setUpdating } from './redux/reducers/formSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import Input from './components/input.js';
 import SelectRest from './components/selectRest.js';
@@ -12,6 +12,7 @@ import MultiSelectRest from './components/multiSelectRest.js';
 import LookupRest from './components/lookupRest.js';
 import { Divider } from '@mui/material';
 import { API_BASE_URL } from './helpers/constants.js';
+import camelCase from './helpers/camelCase.js';
 
 import { CssVarsProvider } from '@mui/joy/styles';
 import CssBaseline from '@mui/joy/CssBaseline';
@@ -29,10 +30,19 @@ const ConsultarProcesso = () => {
     const dispatch = useDispatch();
     const loading = useSelector((state) => state.form.loading);
     const formData = useSelector((state) => state.form.formData);
+    const selectedPedidos = useSelector((state) => state.form.selectedPedidos);
     const invalidFields = useSelector((state) => state.form.invalidFields);
     const isEditing = useSelector((state) => state.form.isEditing);
     const isLoading = useSelector((state) => state.form.isLoading);
+    const isUpdating = useSelector((state) => state.form.isUpdating);
 
+
+    const validateFields = () => {
+        const requiredFields = ['numeroProcesso', 'autor', 'reu', 'reclamada', 'escritorio', 'faseProcessual', 'classificacaoRisco',
+            'natureza', 'tipoAcao', 'tribunal', 'vara', 'funcao'];
+        const invalids = requiredFields.filter(field => !formData[field] || formData[field] === '');
+        return invalids.length === 0;
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -40,20 +50,36 @@ const ConsultarProcesso = () => {
     };
 
     const handleMultiSelectChange = (selectedItems) => {
+
         if (!Array.isArray(selectedItems)) {
             selectedItems = [];
         }
-        const mappedItems = selectedItems.map(item => ({
-            tipoPedido: item.id,
-            descricao: item.descricao
+        const pedidos = selectedItems.map(item => ({
+            idPedido: item.idPedido || null,  // Se não houver, define como null
+            tipoPedido: item.id || item.idTipoPedido, // Adapta para tipoPedido
+            descricao: item.name || item.descricao,
         }));
 
-        setSelectedPedidos(mappedItems);
+        const updatedPedidos = [...selectedPedidos];
+
+        pedidos.forEach(item => {
+            const exists = updatedPedidos.some(p =>
+                p.tipoPedido === item.tipoPedido && p.descricao === item.descricao
+            );
+            if (!exists) {
+                updatedPedidos.push(item); // Adiciona apenas itens novos
+            }
+        });
+
+        dispatch(setFormData((prevState) => ({
+            ...prevState,
+            pedido: pedidos,
+        })));
     };
 
     useEffect(() => {
         dispatch(resetForm());
-    }, [dispatch]);
+    }, []);
 
     const [searchValue, setSearchValue] = useState('');
 
@@ -62,8 +88,46 @@ const ConsultarProcesso = () => {
         dispatch(setFormData({ ...formData }));
     };
 
-    const handleSaveClick = () => {
-        dispatch(setEditing(false));
+    const handleSaveClick = async (e) => {
+        e.preventDefault();
+        dispatch(setUpdating(true));
+
+        if (validateFields()) {
+            try {
+                const camelCaseFormData = camelCase.convertKeysToCamelCase(formData);
+                const { pedidos, ...dataToSend } = formData;
+                /*
+                                const camelCaseFormData = camelCase.convertKeysToCamelCase(formData);
+                                const dataToSend = {
+                                   ...camelCaseFormData,
+                                   pedido: selectedPedidos
+                                 };
+                */
+                console.log("Dados a serem enviados:", JSON.stringify(dataToSend, null, 2));
+                const response = await axios.put(`${API_BASE_URL}/processo/editarProcesso/${searchValue}`, dataToSend);
+                await new Promise((resolve) => setTimeout(resolve, 3000));
+
+                if (response.data === true) {
+                    alert('Processo atualizado com sucesso!');
+                } else {
+                    alert('Erro ao atualizar processo.');
+                }
+            } catch (error) {
+                console.error('Erro ao criar o processo:', error);
+                if (error.response) {
+                    alert(`Erro ao criar o processo: ${error.response.data.message || 'Erro desconhecido'}`);
+                } else if (error.request) {
+                    alert('Erro: Nenhuma resposta recebida do servidor.');
+                } else {
+                    alert(`Erro ao configurar a requisição: ${error.message}`);
+                }
+            } finally {
+                dispatch(setUpdating(false));
+            }
+        } else {
+            alert('Por favor, preencha todos os campos obrigatórios.');
+            dispatch(setUpdating(false));
+        }
     };
 
     const handleCancelClick = () => {
@@ -80,7 +144,7 @@ const ConsultarProcesso = () => {
             await new Promise((resolve) => setTimeout(resolve, 3000));
 
             if (data && data.numeroProcesso) {
-                const pedidos = data.pedido || [];
+                const pedidos = Array.isArray(data.pedido) ? data.pedido : [];
                 dispatch(setFormData({
                     numeroProcesso: data.numeroProcesso,
                     autor: data.autor || '',
@@ -108,6 +172,7 @@ const ConsultarProcesso = () => {
                     depositoJudicial: data.depositoJudicial || '',
                     dataDepositoJudicial: data.dataDepositoJudicial || '',
                     pedidos: pedidos.map(pedido => ({
+                        idPedido: pedido.idPedido,
                         idTipoPedido: pedido.idTipoPedido,
                         descricao: pedido.descricao
                     })),
@@ -214,7 +279,7 @@ const ConsultarProcesso = () => {
 
                         </F.InputLine>
 
-                        <Divider sx={{mt: 3}} />
+                        <Divider sx={{ mt: 3 }} />
 
                         <F.InputLine column>
                             <F.InputLine>
@@ -237,7 +302,7 @@ const ConsultarProcesso = () => {
                                     setFormData={setFormData}
                                     value={formData.numeroProcesso || ''}
                                     invalidFields={invalidFields}
-                                    disabled={!isEditing}
+                                    disabled={true}
                                 />
                                 <Input
                                     label="Réu"
@@ -385,7 +450,7 @@ const ConsultarProcesso = () => {
                                     formData={formData}
                                     setFormData={setFormData}
                                     onChange={handleChange}
-                                    disabled={!isEditing}
+                                    disabled={true}
                                 />
                             </F.MediumInputLine>
 
@@ -511,7 +576,10 @@ const ConsultarProcesso = () => {
                             }}>
                                 <Button type="button" variant='outlined' onClick={handleCancelClick}>Cancelar</Button>
                                 <Button type="reset" variant='soft' onClick={handleEditClick}>Editar</Button>
-                                <Button type="submit" disabled={!isEditing}   >Atualizar</Button>
+                                <Button type="submit" disabled={!isEditing} onClick={handleSaveClick} startDecorator={isUpdating ? <CircularProgress variant="solid" /> : null}>
+                                    {isUpdating ? 'Atualizando...' : 'Atualizar Processo'}
+
+                                </Button>
                             </Box>
                         </F.InputLine>
                     </Box>

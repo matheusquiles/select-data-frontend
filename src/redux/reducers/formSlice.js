@@ -9,6 +9,8 @@ const initialState = {
   isLoading: false,
   isEditing: false,
   isUpdating: false,
+  estadoSelecionado: '', 
+  cidadeSelecionada: '',  
 };
 
 const formSlice = createSlice({
@@ -16,10 +18,6 @@ const formSlice = createSlice({
   initialState,
   errorMessage: '',
   reducers: {
-    loading: {
-      escritorio: false,
-      faseProcessual: false,
-    },
     setLoading: (state, action) => {
       state.isLoading = action.payload;
     },
@@ -35,6 +33,31 @@ const formSlice = createSlice({
     },
     setSelectedPedidos: (state, action) => {
       state.selectedPedidos = action.payload;
+      state.formData.pedido = action.payload.map(item => ({
+        idPedido: item.idPedido || null,
+        tipoPedido: item.idTipoPedido,
+        descricao: item.name,
+      }));
+    },
+    addPedido: (state, action) => {
+      const newPedido = action.payload;
+      if (!state.selectedPedidos.some(p => p.id === newPedido.id)) {
+        state.selectedPedidos.push(newPedido);
+        state.formData.pedido = state.selectedPedidos.map(item => ({
+          idPedido: item.idPedido || null,
+          idTipoPedido: item.id,
+          descricao: item.name,
+        }));
+      }
+    },
+    removePedido: (state, action) => {
+      const pedidoId = action.payload;
+      state.selectedPedidos = state.selectedPedidos.filter(p => p.id !== pedidoId);
+      state.formData.pedido = state.selectedPedidos.map(item => ({
+        idPedido: item.idPedido || null,
+        idTipoPedido: item.id,
+        descricao: item.name,
+      }));
     },
     setInvalidFields: (state, action) => {
       state.invalidFields = action.payload;
@@ -47,6 +70,8 @@ const formSlice = createSlice({
       state.selectedPedidos = [];
       state.invalidFields = [];
       state.errorMessage = '';
+      state.estadoSelecionado = ''; 
+      state.cidadeSelecionada = '';
     },
     updateFormData(state, action) {
       state.formData = action.payload;
@@ -57,6 +82,14 @@ const formSlice = createSlice({
     setEditing: (state) => {
       state.isEditing = !state.isEditing;
     },
+    setEstadoSelecionado: (state, action) => {
+      state.estadoSelecionado = action.payload;
+      state.formData.estado = action.payload;
+    },
+    setCidadeSelecionada: (state, action) => {
+      state.cidadeSelecionada = action.payload;
+      state.formData.cidade = action.payload;
+    },
   },
 });
 
@@ -65,6 +98,8 @@ export const {
   setFormData,
   setOptions,
   setSelectedPedidos,
+  addPedido,
+  removePedido,
   setInvalidFields,
   setErrorMessage,
   resetForm,
@@ -72,5 +107,7 @@ export const {
   setIsValidResponse,
   setEditing,
   setUpdating,
- } = formSlice.actions;
+  setEstadoSelecionado,
+  setCidadeSelecionada,
+} = formSlice.actions;
 export default formSlice.reducer;
