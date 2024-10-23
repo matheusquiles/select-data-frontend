@@ -10,6 +10,8 @@ import * as F from './styles/formulario.jsx';
 import EstadoCidadeInput from './components/cidadeEstado.js';
 import MultiSelectRest from './components/multiSelectRest.js';
 import { API_BASE_URL } from './helpers/constants.js';
+import { API_SAVE_URL } from './helpers/constants.js';
+import camelCase from './helpers/camelCase.js';
 
 import { CssVarsProvider } from '@mui/joy/styles';
 import CssBaseline from '@mui/joy/CssBaseline';
@@ -37,21 +39,6 @@ const CadastroProcesso = () => {
     dispatch(resetForm());
   }, [dispatch]);
 
-
-
-  const toCamelCase = (str) => {
-    return str.replace(/_([a-z])/g, (match, letter) => letter.toUpperCase());
-  };
-
-  const convertKeysToCamelCase = (obj) => {
-    return Object.keys(obj).reduce((acc, key) => {
-      const camelCaseKey = toCamelCase(key);
-      acc[camelCaseKey] = obj[key];
-      return acc;
-    }, {});
-  };
-
-
   const handleChange = (e) => {
     if (e.target && e.target.name && e.target.value !== undefined) {
       const { name, value } = e.target;
@@ -60,7 +47,6 @@ const CadastroProcesso = () => {
       console.error('Event target is missing name or value:', e.target);
     }
   };
-
 
   const handleMultiSelectChange = (selectedItems) => {
 
@@ -92,14 +78,14 @@ const CadastroProcesso = () => {
     
     if (validateFields()) {
       try {
-        const camelCaseFormData = convertKeysToCamelCase(formData);
+        const camelCaseFormData = camelCase.convertKeysToCamelCase(formData);
         const dataToSend = {
           ...camelCaseFormData,
           pedido: selectedPedidos
         };
 
         console.log("Dados a serem enviados:", JSON.stringify(dataToSend, null, 2));
-        const response = await axios.post(`${API_BASE_URL}/processo/salvar`, dataToSend);
+        const response = await axios.post(`${API_SAVE_URL}`, dataToSend);
         await new Promise((resolve) => setTimeout(resolve, 3000));
 
         if (response.data === true) {

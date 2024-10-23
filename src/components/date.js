@@ -3,15 +3,28 @@ import { InputLabel, InputDate } from '../styles/formulario';
 import { GenericP } from '../styles/globalstyles';
 
 
-const formatDateForInput = (isoDate) => {
-    if (!isoDate) return ''; 
-    return new Date(isoDate).toISOString().split('T')[0]; 
-  };
+// const formatDateForInput = (isoDate) => {
+//     if (!isoDate) return ''; 
+//     return new Date(isoDate).toISOString().split('T')[0]; 
+//   };
   
-  const formatDateForApi = (date) => {
-    if (!date) return ''; 
-    return new Date(date).toISOString(); 
-  };
+//   const formatDateForApi = (date) => {
+//     if (!date) return ''; 
+//     return new Date(date).toISOString(); 
+//   };
+
+// Converte ISO para 'YYYY-MM-DD' para exibir no input
+const formatDateForInput = (isoDate) => {
+  if (!isoDate) return '';
+  return isoDate.split('T')[0]; // Extrai apenas a parte 'YYYY-MM-DD'
+};
+
+// Não faz conversão para UTC, apenas mantém 'YYYY-MM-DD'
+const formatDateForApi = (date) => {
+  if (!date) return '';
+  return date; // Envia 'YYYY-MM-DD' diretamente para a API
+};
+
 
 
   export default function DateImput({ 
