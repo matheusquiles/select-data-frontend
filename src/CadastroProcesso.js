@@ -297,7 +297,7 @@ const CadastroProcesso = () => {
                 <F.MediumInputLine>
                   <SelectRest
                     label="Natureza"
-                    first route='natureza'
+                    first imgW route='natureza'
                     id='idNatureza'
                     name='natureza'
                     onChange={setFormData}
@@ -308,7 +308,7 @@ const CadastroProcesso = () => {
                   />
                   <SelectRest
                     label="Tipo de Ação"
-                    small route='tipoAcao'
+                    route='tipoAcao'
                     id='idTipoAcao'
                     name='tipoAcao'
                     onChange={setFormData}
@@ -357,7 +357,7 @@ const CadastroProcesso = () => {
                   />
                 </F.MediumInputLine>
 
-                <F.InputLine>
+                <F.MediumInputLine>
                   <Input
                     label="Últimos andamentos processuais"
                     first fieldName="ultimosAndamentosProcessuais"
@@ -366,7 +366,7 @@ const CadastroProcesso = () => {
                     onChange={handleChange}
                     invalidFields={invalidFields}
                   />
-                </F.InputLine>
+                </F.MediumInputLine>
 
                 <F.MediumInputLine>
                   <MultiSelectRest
