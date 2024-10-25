@@ -451,11 +451,13 @@ const CadastroProcesso = () => {
               display: 'flex',
               flexWrap: 'nowrap',
               gap: 2,
-              mt: 3,
+              mt: 15,
               mb: 1,
               width: '100%',
+              paddingBottom: '30px',
+              overflow: 'visible', 
               flexDirection: 'row',
-              alignItems: 'center',
+              alignItems: 'flex-start',
               justifyContent: 'flex-end'
             }}>
               <Button type="button" variant='outlined' onClick={handleCancelClick}>Cancelar</Button>

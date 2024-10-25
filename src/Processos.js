@@ -86,8 +86,13 @@ const ConsultarProcesso = () => {
     const [searchValue, setSearchValue] = useState('');
 
     const handleEditClick = () => {
-        dispatch(setEditing(true));
-        dispatch(setFormData({ ...formData }));
+        if(!formData.numeroProcesso) {
+            alert('Por favor, busque um processo antes de editar.');
+            return;
+        } else {
+            dispatch(setEditing(true));
+            dispatch(setFormData({ ...formData }));
+        }
     };
 
     const handleSaveClick = async (e) => {
@@ -181,6 +186,7 @@ const ConsultarProcesso = () => {
                 }));
                 dispatch(setIsValidResponse(true));
             } else {
+                alert('Processo não encontrado ou dados inválidos');
                 dispatch(setErrorMessage('Processo não encontrado ou dados inválidos.'));
                 dispatch(setIsValidResponse(false));
             }

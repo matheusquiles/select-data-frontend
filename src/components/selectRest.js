@@ -34,7 +34,7 @@ export default function SelectRest({ label, first, medium, topless, small, route
       });
 
       dispatch(setOptions({ route, options: thisOptions }));
-      await new Promise((resolve) => setTimeout(resolve, 3000)); // Simulando atraso
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulando atraso
     } catch (error) {
       console.log('Erro na requisição:', error);
     } finally {
