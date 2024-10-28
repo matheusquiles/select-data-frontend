@@ -5,18 +5,16 @@ const initialState = {
   selectedPedidos: [],
   options: {},
   invalidFields: [],
-  errorMessage: '',
   isLoading: false,
   isEditing: false,
   isUpdating: false,
-  estadoSelecionado: '', 
-  cidadeSelecionada: '',  
+  estadoSelecionado: '',
+  cidadeSelecionada: '',
 };
 
 const formSlice = createSlice({
   name: 'form',
   initialState,
-  errorMessage: '',
   reducers: {
     setLoading: (state, action) => {
       state.isLoading = action.payload;
@@ -25,19 +23,12 @@ const formSlice = createSlice({
       state.isUpdating = action.payload;
     },
     setFormData: (state, action) => {
-      state.formData = { ...state.formData, ...action.payload };
+      const newData = action.payload.formData ? action.payload.formData : action.payload;
+      state.formData = { ...state.formData, ...newData };
     },
     setOptions: (state, action) => {
       const { route, options } = action.payload;
       state.options[route] = options;
-    },
-    setSelectedPedidos: (state, action) => {
-      state.selectedPedidos = action.payload;
-      state.formData.pedido = action.payload.map(item => ({
-        idPedido: item.idPedido || null,
-        tipoPedido: item.idTipoPedido,
-        descricao: item.name,
-      }));
     },
     addPedido: (state, action) => {
       const newPedido = action.payload;
@@ -46,7 +37,6 @@ const formSlice = createSlice({
         state.formData.pedido = state.selectedPedidos.map(item => ({
           idPedido: item.idPedido || null,
           idTipoPedido: item.id,
-          descricao: item.name,
         }));
       }
     },
@@ -59,6 +49,15 @@ const formSlice = createSlice({
         descricao: item.name,
       }));
     },
+
+    setSelectedPedidos: (state, action) => {
+      state.selectedPedidos = action.payload;
+      state.formData.pedido = action.payload.map(item => ({
+        idPedido: item.idPedido || null,
+        tipoPedido: item.idTipoPedido,
+        descricao: item.name,
+      }));
+    },
     setInvalidFields: (state, action) => {
       state.invalidFields = action.payload;
     },
@@ -66,15 +65,7 @@ const formSlice = createSlice({
       state.errorMessage = action.payload;
     },
     resetForm: (state) => {
-      state.formData = {};
-      state.selectedPedidos = [];
-      state.invalidFields = [];
-      state.errorMessage = '';
-      state.estadoSelecionado = ''; 
-      state.cidadeSelecionada = '';
-    },
-    updateFormData(state, action) {
-      state.formData = action.payload;
+      Object.assign(state, initialState);
     },
     setIsValidResponse: (state, action) => {
       state.isValidResponse = action.payload;
@@ -103,7 +94,6 @@ export const {
   setInvalidFields,
   setErrorMessage,
   resetForm,
-  updateFormData,
   setIsValidResponse,
   setEditing,
   setUpdating,

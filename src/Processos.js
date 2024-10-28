@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { setErrorMessage, setFormData, setIsValidResponse, setSelectedPedidos, resetForm, setEditing, setLoading, setUpdating } from './redux/reducers/formSlice';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import Input from './components/input.js';
 import SelectRest from './components/selectRest.js';
 import DateImput from './components/date.js';
@@ -11,7 +11,6 @@ import EstadoCidadeInput from './components/cidadeEstado.js';
 import MultiSelectRest from './components/multiSelectRest.js';
 import LookupRest from './components/lookupRest.js';
 import { Divider } from '@mui/material';
-import { API_BASE_URL } from './helpers/constants.js';
 import { API_SEARCH_URL } from './helpers/constants.js';
 import { API_UPDATE_URL } from './helpers/constants.js';
 import camelCase from './helpers/camelCase.js';
@@ -30,14 +29,25 @@ import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 
 const ConsultarProcesso = () => {
     const dispatch = useDispatch();
-    const loading = useSelector((state) => state.form.loading);
-    const formData = useSelector((state) => state.form.formData);
-    const selectedPedidos = useSelector((state) => state.form.selectedPedidos);
-    const invalidFields = useSelector((state) => state.form.invalidFields);
-    const isEditing = useSelector((state) => state.form.isEditing);
-    const isLoading = useSelector((state) => state.form.isLoading);
-    const isUpdating = useSelector((state) => state.form.isUpdating);
-
+    const {
+        loading,
+        formData,
+        selectedPedidos,
+        invalidFields,
+        isEditing,
+        isLoading,
+        isUpdating,
+        formState
+    } = useSelector(state => ({
+        loading: state.form.loading,
+        formData: state.form.formData,
+        selectedPedidos: state.form.selectedPedidos,
+        invalidFields: state.form.invalidFields,
+        isEditing: state.form.isEditing,
+        isLoading: state.form.isLoading,
+        isUpdating: state.form.isUpdating,
+        formState: state.form
+    }), shallowEqual);
 
     const validateFields = () => {
         const requiredFields = ['numeroProcesso', 'autor', 'reu', 'reclamada', 'escritorio', 'faseProcessual', 'classificacaoRisco',
@@ -46,19 +56,19 @@ const ConsultarProcesso = () => {
         return invalids.length === 0;
     };
 
-    const handleChange = (e) => {
+    const handleChange = useCallback((e) => {
         const { name, value } = e.target;
         dispatch(setFormData({ [name]: value }));
-    };
+    }, [dispatch]);
 
-    const handleMultiSelectChange = (selectedItems) => {
-
+    const handleMultiSelectChange = useCallback((selectedItems) => {
         if (!Array.isArray(selectedItems)) {
             selectedItems = [];
         }
+
         const pedidos = selectedItems.map(item => ({
-            idPedido: item.idPedido || null,  
-            tipoPedido: item.id || item.idTipoPedido, 
+            idPedido: item.idPedido || null,
+            tipoPedido: item.id || item.idTipoPedido,
             descricao: item.name || item.descricao,
         }));
 
@@ -69,48 +79,44 @@ const ConsultarProcesso = () => {
                 p.tipoPedido === item.tipoPedido && p.descricao === item.descricao
             );
             if (!exists) {
-                updatedPedidos.push(item); 
+                updatedPedidos.push(item);
             }
         });
 
-        dispatch(setFormData((prevState) => ({
-            ...prevState,
-            pedido: pedidos,
-        })));
-    };
+        const newState = {
+            ...formState,
+            pedido: updatedPedidos,
+        };
+        dispatch(setFormData(newState));
+    }, [dispatch, selectedPedidos, formState]);
 
     useEffect(() => {
         dispatch(resetForm());
-    }, []);
+    }, [dispatch]);
 
     const [searchValue, setSearchValue] = useState('');
 
-    const handleEditClick = () => {
-        if(!formData.numeroProcesso) {
+    const handleEditClick = useCallback(() => {
+        if (!formData.numeroProcesso) {
             alert('Por favor, busque um processo antes de editar.');
             return;
-        } else {
+        } else { 
             dispatch(setEditing(true));
-            dispatch(setFormData({ ...formData }));
+            // dispatch(setFormData({ ...formData }));
+            console.log('Dados recebidos para edição:', formData);
         }
-    };
+    }, [dispatch, formData]);
 
-    const handleSaveClick = async (e) => {
+    const handleSaveClick = useCallback(async (e) => {
         e.preventDefault();
         dispatch(setUpdating(true));
 
         if (validateFields()) {
             try {
-                const camelCaseFormData = camelCase.convertKeysToCamelCase(formData);
+                // const camelCaseFormData = camelCase.convertKeysToCamelCase(formData);
                 const { pedidos, ...dataToSend } = formData;
-                /*
-                                const camelCaseFormData = camelCase.convertKeysToCamelCase(formData);
-                                const dataToSend = {
-                                   ...camelCaseFormData,
-                                   pedido: selectedPedidos
-                                 };
-                */
                 console.log("Dados a serem enviados:", JSON.stringify(dataToSend, null, 2));
+
                 const response = await axios.put(`${API_UPDATE_URL}${searchValue}`, dataToSend);
                 await new Promise((resolve) => setTimeout(resolve, 3000));
 
@@ -135,17 +141,18 @@ const ConsultarProcesso = () => {
             alert('Por favor, preencha todos os campos obrigatórios.');
             dispatch(setUpdating(false));
         }
-    };
+    }, [dispatch, formData, searchValue, validateFields]);
 
-    const handleCancelClick = () => {
+    const handleCancelClick = useCallback(() => {
         dispatch(resetForm());
         dispatch(setEditing(false));
-    };
+    }, [dispatch]);
 
-
-    const handleSearch = async () => {
+    const handleSearch = useCallback(async () => {
         dispatch(resetForm());
         dispatch(setLoading(true));
+        dispatch(setEditing(true));
+
         try {
             const { data } = await axios.get(`${API_SEARCH_URL}${searchValue}`);
             await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -153,32 +160,8 @@ const ConsultarProcesso = () => {
             if (data && data.numeroProcesso) {
                 const pedidos = Array.isArray(data.pedido) ? data.pedido : [];
                 dispatch(setFormData({
-                    numeroProcesso: data.numeroProcesso,
-                    autor: data.autor || '',
-                    escritorio: data.escritorio || '',
-                    reu: data.reu || '',
-                    reclamada: data.reclamada || '',
-                    vara: data.vara || '',
-                    faseProcessual: data.faseProcessual || '',
-                    classificacaoRisco: data.classificacaoRisco || '',
-                    funcao: data.funcao || '',
-                    natureza: data.natureza || '',
-                    tipoAcao: data.tipoAcao || '',
-                    tribunal: data.tribunal || '',
-                    valorCausa: data.valorCausa || '',
-                    dataAjuizamento: data.dataAjuizamento || '',
-                    estado: data.estado || '',
-                    cidade: data.cidade || '',
-                    ultimosAndamentosProcessuais: data.ultimosAndamentosProcessuais || '',
-                    admissao: data.admissao || '',
-                    demissao: data.demissao || '',
-                    depositoRecursalOrdinario: data.depositoRecursalOrdinario || '',
-                    dataDepositoRecursalOrdinario: data.dataDepositoRecursalOrdinario || '',
-                    depositoRecursalRevista: data.depositoRecursalRevista || '',
-                    dataDepositoRecursalRevista: data.dataDepositoRecursalRevista || '',
-                    depositoJudicial: data.depositoJudicial || '',
-                    dataDepositoJudicial: data.dataDepositoJudicial || '',
-                    pedidos: pedidos.map(pedido => ({
+                    ...data,
+                    pedido: pedidos.map(pedido => ({
                         idPedido: pedido.idPedido,
                         idTipoPedido: pedido.idTipoPedido,
                         descricao: pedido.descricao
@@ -196,7 +179,7 @@ const ConsultarProcesso = () => {
         } finally {
             dispatch(setLoading(false));
         }
-    };
+    }, [dispatch, searchValue]);
 
 
     return (
@@ -362,7 +345,6 @@ const ConsultarProcesso = () => {
                                     name='vara'
                                     onChange={setFormData}
                                     form={formData}
-                                    defaultValue=""
                                     invalidFields={invalidFields}
                                     loading={loading}
                                     disabled={!isEditing}
@@ -474,20 +456,20 @@ const ConsultarProcesso = () => {
                                 />
                             </F.MediumInputLine>
 
-                            <F.MediumInputLine>
+                            <F.InputLine>
                                 <MultiSelectRest
                                     label="Pedidos do Processo"
-                                    first route='tipoPedido'
+                                    first small route='tipoPedido'
                                     id='idTipoPedido'
                                     name='descricao'
                                     onChange={handleMultiSelectChange}
                                     form={formData}
-                                    defaultValue={formData.pedidos ? formData.pedidos.map(pedido => ({ id: pedido.idTipoPedido, name: pedido.descricao })) : []}
+                                    defaultValue={formData.pedido ? formData.pedido.map(pedido => ({ id: pedido.idTipoPedido, name: pedido.descricao })) : []}
                                     invalidFields={invalidFields}
                                     loading={loading}
                                     disabled={!isEditing}
                                 />
-                            </F.MediumInputLine>
+                            </F.InputLine>
 
                             <F.SmallInputLine>
                                 <DateImput
@@ -512,7 +494,7 @@ const ConsultarProcesso = () => {
                             <F.SmallInputLine>
                                 <MoneyImput
                                     label="Depósito Recurso Ordinário"
-                                    first  fieldName="depositoRecursalOrdinario"
+                                    first fieldName="depositoRecursalOrdinario"
                                     formData={formData}
                                     value={formData.depositoRecursalOrdinario || ''}
                                     setFormData={setFormData}
@@ -583,7 +565,7 @@ const ConsultarProcesso = () => {
                                 justifyContent: 'flex-end'
                             }}>
                                 <Button type="button" variant='outlined' onClick={handleCancelClick}>Cancelar</Button>
-                                <Button type="reset" variant='soft' onClick={handleEditClick}>Editar</Button>
+                                <Button type="reset" variant='soft' onClick={handleEditClick} disabled>Editar</Button>
                                 <Button type="submit" disabled={!isEditing} onClick={handleSaveClick} startDecorator={isUpdating ? <CircularProgress variant="solid" /> : null}>
                                     {isUpdating ? 'Atualizando...' : 'Atualizar Processo'}
 

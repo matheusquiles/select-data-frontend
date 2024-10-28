@@ -19,7 +19,6 @@ export default function MultiSelectRest({
   const isInvalid = invalidFields.includes(route);
   const isLoadingDelayed = loadingDelay || isLoading;
 
-  // Função para buscar os dados da API e armazenar em Redux.
   const getData = useCallback(async () => {
     dispatch(setLoading(true));
     setLoadingDelay(true);
@@ -27,7 +26,7 @@ export default function MultiSelectRest({
       const { data } = await axios.get(`${API_BASE_URL}/${route}`);
       const thisOptions = data.map((obj) => ({ id: obj[id], name: obj[name] }));
       dispatch(setOptions({ route, options: thisOptions }));
-      await new Promise((resolve) => setTimeout(resolve, 3000)); // Simulação de atraso.
+      await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulação de atraso.
     } catch (error) {
       console.error('Erro na requisição:', error);
     } finally {
@@ -48,16 +47,45 @@ export default function MultiSelectRest({
       dispatch(setFormData({ [route]: defaultValue }));
       onChange(defaultValue.map(item => ({ idTipoPedido: item.id })));
     }
-  }, [defaultValue, selectedItems, dispatch, onChange, route]);
+  }, [defaultValue, selectedItems, dispatch, onChange, route]); 
 
-  const handleSelect = ({ target: { value } }) => {
+/*  useEffect(() => {
+    if (defaultValue.length > 0 && defaultValue !== selectedItems) {
+        // Apenas dispare a atualização se os valores forem realmente diferentes
+        const novosPedidos = defaultValue.map(item => ({
+            idPedido: item.idPedido || item.idTipoPedido,
+            descricao: item.name || item.descricao,
+        }));
+
+        // Atualiza o estado do form apenas se houver diferença
+        dispatch(setFormData({ [route]: novosPedidos }));
+        onChange(novosPedidos.map(item => ({ idTipoPedido: item.idPedido })));
+    }
+}, [defaultValue, selectedItems, dispatch, onChange, route]); 
+
+*/
+
+
+ const handleSelect = ({ target: { value } }) => {
     const selectedItem = options.find(option => option.id === Number(value));
     if (selectedItem && !selectedItems.some(item => item.id === selectedItem.id)) {
       const newSelectedItems = [...selectedItems, selectedItem];
       dispatch(setFormData({ [route]: newSelectedItems }));
       onChange(newSelectedItems);
     }
-  };
+  }; 
+
+ /* const handleSelect = ({ target: { value } }) => {
+    const selectedItem = options.find(option => option.id === Number(value));
+  
+    if (selectedItem && !selectedItems.some(item => item.id === selectedItem.id)) {
+      const newSelectedItems = [...selectedItems, selectedItem];
+  
+      dispatch(setFormData({ [route]: newSelectedItems }));
+      onChange(newSelectedItems);
+    }
+  }; */
+  
 
   const removeItem = (itemId) => {
     const newSelectedItems = selectedItems.filter(item => item.id !== itemId);
