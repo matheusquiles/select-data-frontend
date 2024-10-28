@@ -49,33 +49,7 @@ export default function MultiSelectRest({
     }
   }, [defaultValue, selectedItems, dispatch, onChange, route]); 
 
-/*  useEffect(() => {
-    if (defaultValue.length > 0 && defaultValue !== selectedItems) {
-        // Apenas dispare a atualização se os valores forem realmente diferentes
-        const novosPedidos = defaultValue.map(item => ({
-            idPedido: item.idPedido || item.idTipoPedido,
-            descricao: item.name || item.descricao,
-        }));
-
-        // Atualiza o estado do form apenas se houver diferença
-        dispatch(setFormData({ [route]: novosPedidos }));
-        onChange(novosPedidos.map(item => ({ idTipoPedido: item.idPedido })));
-    }
-}, [defaultValue, selectedItems, dispatch, onChange, route]); 
-
-*/
-
-
- const handleSelect = ({ target: { value } }) => {
-    const selectedItem = options.find(option => option.id === Number(value));
-    if (selectedItem && !selectedItems.some(item => item.id === selectedItem.id)) {
-      const newSelectedItems = [...selectedItems, selectedItem];
-      dispatch(setFormData({ [route]: newSelectedItems }));
-      onChange(newSelectedItems);
-    }
-  }; 
-
- /* const handleSelect = ({ target: { value } }) => {
+  const handleSelect = ({ target: { value } }) => {
     const selectedItem = options.find(option => option.id === Number(value));
   
     if (selectedItem && !selectedItems.some(item => item.id === selectedItem.id)) {
@@ -84,7 +58,7 @@ export default function MultiSelectRest({
       dispatch(setFormData({ [route]: newSelectedItems }));
       onChange(newSelectedItems);
     }
-  }; */
+  };
   
 
   const removeItem = (itemId) => {
