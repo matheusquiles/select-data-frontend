@@ -2,17 +2,6 @@ import React from 'react';
 import { InputLabel, InputDate } from '../styles/formulario';
 import { GenericP } from '../styles/globalstyles';
 
-
-// const formatDateForInput = (isoDate) => {
-//     if (!isoDate) return ''; 
-//     return new Date(isoDate).toISOString().split('T')[0]; 
-//   };
-  
-//   const formatDateForApi = (date) => {
-//     if (!date) return ''; 
-//     return new Date(date).toISOString(); 
-//   };
-
 // Converte ISO para 'YYYY-MM-DD' para exibir no input
 const formatDateForInput = (isoDate) => {
   if (!isoDate) return '';

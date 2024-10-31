@@ -68,8 +68,8 @@ const ConsultarProcesso = () => {
 
         const pedidos = selectedItems.map(item => ({
             idPedido: item.idPedido || null,
-            tipoPedido: item.id || item.idTipoPedido,
-            descricao: item.name || item.descricao,
+            tipoPedido: item.id,
+            descricao: item.name
         }));
 
         const updatedPedidos = [...selectedPedidos];
@@ -87,6 +87,8 @@ const ConsultarProcesso = () => {
             ...formState,
             pedido: updatedPedidos,
         };
+        setSelectedPedidos(pedidos);
+        dispatch(setSelectedPedidos(pedidos));
         dispatch(setFormData(newState));
     }, [dispatch, selectedPedidos, formState]);
 
@@ -136,12 +138,13 @@ const ConsultarProcesso = () => {
                 }
             } finally {
                 dispatch(setUpdating(false));
+                // dispatch(validateFields(true))
             }
         } else {
             alert('Por favor, preencha todos os campos obrigatórios.');
             dispatch(setUpdating(false));
         }
-    }, [dispatch, formData, searchValue, validateFields]);
+    }, [dispatch, formData, searchValue]);
 
     const handleCancelClick = useCallback(() => {
         dispatch(resetForm());

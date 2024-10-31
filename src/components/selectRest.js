@@ -11,7 +11,6 @@ export default function SelectRest({ label, first, medium, topless, small, route
   const selected = useSelector((state) => state.form.formData[route] || defaultValue);
   const options = useSelector((state) => state.form.options[route] || []);
   const isInvalid = invalidFields.includes(route);
-  const isEditing = useSelector((state) => state.form.isEditing);
   const [loadingDelay, setLoadingDelay] = useState(false);
 
   const handleSelect = (event) => {
@@ -46,7 +45,6 @@ export default function SelectRest({ label, first, medium, topless, small, route
   
 
   const isLoading = useSelector((state) => state.form.isLoading);
-  const isLoadingDelayed = loadingDelay || isLoading;
 
   return (
     <InputLabel first={first} medium={medium} topless={topless} small={small} style={{ borderColor: isInvalid ? 'red' : 'inherit' }}>

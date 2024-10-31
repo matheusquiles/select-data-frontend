@@ -219,7 +219,7 @@ export default function Sidebar({ setActiveComponent }) {
                                     <ListItemButton>Criar novo usuário</ListItemButton>
                                 </ListItem>
                                 <ListItem>
-                                    <ListItemButton>Permission</ListItemButton>
+                                    <ListItemButton>Permissões</ListItemButton>
                                 </ListItem>
                             </List>
                         </Toggler>
@@ -232,7 +232,7 @@ export default function Sidebar({ setActiveComponent }) {
                         flexGrow: 0,
                         '--ListItem-radius': (theme) => theme.vars.radius.sm,
                         '--List-gap': '8px',
-                        mb: 2,
+                        mb: 0,
                     }}
                 >
                     <ListItem sx={{fontSize: '16px'}}> 

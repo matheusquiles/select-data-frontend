@@ -7,15 +7,22 @@ export const Input = styled.input`
   background-color: ${WHITE};
   border: solid #CDD7E1 .1px !important;
   border-radius: 5px;
-  /* margin: ${MARGIN} 0; */
   font-size: 1em;
-  padding: 1m;
+  padding: 0.5m;
+  line-height: .5em;
   box-shadow: ${BOX_SHADOW};
   outline: none;
      &:disabled {
     background-color: #F8F8FF; 
     color: black;  
   }
+  &:focus, &:active {
+  background-color: ${({ $styled }) => !$styled && WHITE};
+  box-shadow: ${({ $styled }) =>
+    !$styled && '0 0 4px rgba(0, 0, 0, 0.15), 0 0 8px rgba(0, 0, 0, 0.10)'};
+  border-color: ${({ $styled }) => !$styled && '#ddd'};
+  }
+    
 `;
 
 export const selectInput = styled.input`
@@ -74,7 +81,6 @@ export const InputLabel = styled.label`
     
 `;
 
-
 export const LookupLabel = styled.label`
   display: flex;
   flex-direction: column;
@@ -84,14 +90,7 @@ export const LookupLabel = styled.label`
   margin-right: ${({ first, small }) => first && small ? '.5rem' : '0'};
   width: ${({ small }) => small ? '40%' : 'auto'};
   
-  /* color: ${TEXT_SECUNDARY}; */
 
-  /* @media(min-width: 1280px) {
-    margin-left: ${({ gap }) => gap ? '1rem' : '0'};
-    width: ${({ items }) => !items || items < 2 ? '100%' : `calc(100% / ${items})`};
-    max-width: ${({ maxWidth }) => maxWidth && maxWidth};
-    padding: ${({ pad, maxWidth }) => pad && `0 calc((100% - ${maxWidth}) / 2)`};
-  } */
 `;
 
 
@@ -124,9 +123,11 @@ export const StyledSelect = styled.select`
   color: black;  
   }
 
-  :focus {
-    background-color: ${({ $styled }) => !$styled && WHITE};
-    box-shadow: ${({ $styled }) => !$styled && BOX_SHADOW};
+  &:focus, &:active {
+  background-color: ${({ $styled }) => !$styled && WHITE};
+  box-shadow: ${({ $styled }) =>
+    !$styled && '0 0 4px rgba(0, 0, 0, 0.15), 0 0 8px rgba(0, 0, 0, 0.10)'};
+  border-color: ${({ $styled }) => !$styled && '#ddd'};
   }
 
 
@@ -146,6 +147,14 @@ export const InputDate = styled.input`
   background-color: #F8F8FF;
   color: black;  
   }
+    &:focus, &:active {
+  background-color: ${({ $styled }) => !$styled && WHITE};
+  box-shadow: ${({ $styled }) =>
+    !$styled && '0 0 4px rgba(0, 0, 0, 0.15), 0 0 8px rgba(0, 0, 0, 0.10)'};
+  border-color: ${({ $styled }) => !$styled && '#ddd'};
+  }
+
+  
 `
 
 export const InputMoney = styled.input`
@@ -158,8 +167,14 @@ export const InputMoney = styled.input`
   outline: none;
     &:disabled {
   background-color: #F8F8FF;
-  color: black;  
-  }
+  color: black; 
+}
+      &:focus, &:active {
+  background-color: ${({ $styled }) => !$styled && WHITE};
+  box-shadow: ${({ $styled }) =>
+    !$styled && '0 0 4px rgba(0, 0, 0, 0.15), 0 0 8px rgba(0, 0, 0, 0.10)'};
+  border-color: ${({ $styled }) => !$styled && '#ddd'};
+  
 `
 
 export const InputWrapper = styled.div`

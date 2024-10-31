@@ -23,7 +23,7 @@ export default function MoneyImput({ label, fieldName, first, topless, imgW, sma
            <GenericP>{label}:</GenericP>
             <NumericFormat
                 id={label}
-                value={value || ''} // Garante que o valor seja uma string
+                value={value || ''} 
                 onValueChange={handleChange}
                 thousandSeparator="."
                 decimalSeparator=","
