@@ -26,6 +26,7 @@ import CircularProgress from '@mui/joy/CircularProgress';
 
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
+import MultiSelectResteEdited from './components/multiSelectRestEdited.js';
 
 const ConsultarProcesso = () => {
     const dispatch = useDispatch();
@@ -104,8 +105,7 @@ const ConsultarProcesso = () => {
             return;
         } else { 
             dispatch(setEditing(true));
-            // dispatch(setFormData({ ...formData }));
-            console.log('Dados recebidos para edição:', formData);
+            dispatch(setFormData({ ...formData }));
         }
     }, [dispatch, formData]);
 
@@ -460,7 +460,7 @@ const ConsultarProcesso = () => {
                             </F.MediumInputLine>
 
                             <F.InputLine>
-                                <MultiSelectRest
+                                <MultiSelectResteEdited
                                     label="Pedidos do Processo"
                                     first small route='tipoPedido'
                                     id='idTipoPedido'
