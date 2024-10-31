@@ -58,7 +58,7 @@ export default function Sidebar({ setActiveComponent }) {
         <Sheet
             className="Sidebar"
             sx={{
-                position: { xs: 'fixed', md: 'sticky' },
+                position: 'fixed', 
                 transform: {
                     xs: 'translateX(calc(100% * (var(--SideNavigation-slideIn, 0) - 1)))',
                     md: 'none',

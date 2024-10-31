@@ -26,10 +26,10 @@ const formSlice = createSlice({
       const newData = action.payload.formData ? action.payload.formData : action.payload;
       state.formData = { ...state.formData, ...newData };
     },
-    setOptions: (state, action) => {
-      const { route, options } = action.payload;
-      state.options[route] = options;
-    },
+    // setOptions: (state, action) => {
+    //   const { route, options } = action.payload;
+    //   state.options[route] = options;
+    // },
     addPedido: (state, action) => {
       const newPedido = action.payload;
       if (!state.selectedPedidos.some(p => p.id === newPedido.id)) {
@@ -50,14 +50,31 @@ const formSlice = createSlice({
       }));
     },
 
+    // setSelectedPedidos: (state, action) => {
+    //   state.selectedPedidos = action.payload.map(item => ({
+    //     idPedido: item.idPedido || null,
+    //     idTipoPedido: item.id,
+    //     descricao: item.name, // Verifique se `item.name` é correto conforme os dados da API
+    //   }));
+    //   state.formData.pedido = state.selectedPedidos;
+    // },
+
+
     setSelectedPedidos: (state, action) => {
       state.selectedPedidos = action.payload;
       state.formData.pedido = action.payload.map(item => ({
-        idPedido: item.idPedido || null,
         tipoPedido: item.idTipoPedido,
-        descricao: item.name,
+        descricao: item.descricao,
       }));
     },
+    // Atualização das opções (tipos de pedidos disponíveis)
+    setOptions: (state, action) => {
+      const { route, options } = action.payload;
+      state.options[route] = options;
+    },
+
+
+
     setInvalidFields: (state, action) => {
       state.invalidFields = action.payload;
     },
