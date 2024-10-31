@@ -8,7 +8,6 @@ import DateImput from './components/date.js';
 import MoneyImput from './components/money.js';
 import * as F from './styles/formulario.jsx';
 import EstadoCidadeInput from './components/cidadeEstado.js';
-import MultiSelectRest from './components/multiSelectRest.js';
 import LookupRest from './components/lookupRest.js';
 import { Divider } from '@mui/material';
 import { API_SEARCH_URL } from './helpers/constants.js';
@@ -26,7 +25,7 @@ import CircularProgress from '@mui/joy/CircularProgress';
 
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
-import MultiSelectResteEdited from './components/multiSelectRestEdited.js';
+import PedidoManager from './components/PedidoManger.js';
 
 const ConsultarProcesso = () => {
     const dispatch = useDispatch();
@@ -103,7 +102,7 @@ const ConsultarProcesso = () => {
         if (!formData.numeroProcesso) {
             alert('Por favor, busque um processo antes de editar.');
             return;
-        } else { 
+        } else {
             dispatch(setEditing(true));
             dispatch(setFormData({ ...formData }));
         }
@@ -459,20 +458,7 @@ const ConsultarProcesso = () => {
                                 />
                             </F.MediumInputLine>
 
-                            <F.InputLine>
-                                <MultiSelectResteEdited
-                                    label="Pedidos do Processo"
-                                    first small route='tipoPedido'
-                                    id='idTipoPedido'
-                                    name='descricao'
-                                    onChange={handleMultiSelectChange}
-                                    form={formData}
-                                    defaultValue={formData.pedido ? formData.pedido.map(pedido => ({ id: pedido.idTipoPedido, name: pedido.descricao })) : []}
-                                    invalidFields={invalidFields}
-                                    loading={loading}
-                                    disabled={!isEditing}
-                                />
-                            </F.InputLine>
+
 
                             <F.SmallInputLine>
                                 <DateImput
@@ -553,6 +539,16 @@ const ConsultarProcesso = () => {
                                     disabled={!isEditing}
                                 />
                             </F.SmallInputLine>
+
+                            <F.InputLine>
+                                <PedidoManager 
+                                    form={formData}
+                                    disabled={!isEditing} />
+
+
+                            </F.InputLine>
+
+
                         </F.InputLine>
 
                         <F.InputLine>
