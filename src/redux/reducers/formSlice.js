@@ -63,7 +63,7 @@ const formSlice = createSlice({
     setSelectedPedidos: (state, action) => {
       state.selectedPedidos = action.payload;
       state.formData.pedido = action.payload.map(item => ({
-        idTipoPedido: item.idTipoPedido,
+        tipoPedido: item.idTipoPedido,
         descricao: item.descricao,
       }));
     },

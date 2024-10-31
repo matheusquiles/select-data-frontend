@@ -32,12 +32,10 @@ const ConsultarProcesso = () => {
     const {
         loading,
         formData,
-        selectedPedidos,
         invalidFields,
         isEditing,
         isLoading,
         isUpdating,
-        formState
     } = useSelector(state => ({
         loading: state.form.loading,
         formData: state.form.formData,
@@ -61,36 +59,6 @@ const ConsultarProcesso = () => {
         dispatch(setFormData({ [name]: value }));
     }, [dispatch]);
 
-    const handleMultiSelectChange = useCallback((selectedItems) => {
-        if (!Array.isArray(selectedItems)) {
-            selectedItems = [];
-        }
-
-        const pedidos = selectedItems.map(item => ({
-            idPedido: item.idPedido || null,
-            tipoPedido: item.id,
-            descricao: item.name
-        }));
-
-        const updatedPedidos = [...selectedPedidos];
-
-        pedidos.forEach(item => {
-            const exists = updatedPedidos.some(p =>
-                p.tipoPedido === item.tipoPedido && p.descricao === item.descricao
-            );
-            if (!exists) {
-                updatedPedidos.push(item);
-            }
-        });
-
-        const newState = {
-            ...formState,
-            pedido: updatedPedidos,
-        };
-        setSelectedPedidos(pedidos);
-        dispatch(setSelectedPedidos(pedidos));
-        dispatch(setFormData(newState));
-    }, [dispatch, selectedPedidos, formState]);
 
     useEffect(() => {
         dispatch(resetForm());
@@ -540,12 +508,11 @@ const ConsultarProcesso = () => {
                                 />
                             </F.SmallInputLine>
 
+                                <Divider sx={{ mt: 3 }} />
                             <F.InputLine>
-                                <PedidoManager 
+                                <PedidoManager
                                     form={formData}
                                     disabled={!isEditing} />
-
-
                             </F.InputLine>
 
 

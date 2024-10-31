@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-import { setOptions, setSelectedPedidos } from '../redux/reducers/formSlice';
+import { setOptions, setSelectedPedidos, setLoading } from '../redux/reducers/formSlice';
 import { API_BASE_URL } from '../helpers/constants';
 
-export default function PedidoManager({ form }) {
+export default function PedidoManager({ form, disabled = false }) {
   const dispatch = useDispatch();
   const options = useSelector(state => state.form.options['tipoPedido'] || []);
   const pedidos = useSelector(state => state.form.selectedPedidos);
@@ -12,6 +12,7 @@ export default function PedidoManager({ form }) {
   const [selectedTipoPedido, setSelectedTipoPedido] = useState(null);
 
   const loadTipoPedidoOptions = useCallback(async () => {
+    dispatch(setLoading(true));
     if (options.length === 0) {
       try {
         const { data } = await axios.get(`${API_BASE_URL}/tipoPedido`);
@@ -22,6 +23,8 @@ export default function PedidoManager({ form }) {
         dispatch(setOptions({ route: 'tipoPedido', options: optionsData }));
       } catch (error) {
         console.error("Erro ao carregar opções de tipo de pedido", error);
+      } finally {
+        dispatch(setLoading(false));
       }
     }
   }, [dispatch, options.length]);
@@ -60,12 +63,15 @@ export default function PedidoManager({ form }) {
     dispatch(setSelectedPedidos(updatedPedidos));
   };
 
+  const isLoading = useSelector((state) => state.form.isLoading);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
       <h3>Pedidos</h3>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         <select
+        disabled={disabled || isLoading}
           value={selectedTipoPedido ? selectedTipoPedido.id : ''}
           onChange={(e) => {
             const tipo = options.find(opt => opt.id === Number(e.target.value));
