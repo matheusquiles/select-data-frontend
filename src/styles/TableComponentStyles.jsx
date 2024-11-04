@@ -40,3 +40,21 @@ export const Checkbox = styled.input.attrs({ type: 'checkbox' })`
   width: 16px; /* Aumenta a largura do checkbox */
   height: 16px; /* Aumenta a altura do checkbox */
 `;
+
+export const LoadingOverlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+`;
+
+export const DisabledTable = styled.div`
+  pointer-events: none;
+  opacity: 0.5;
+`;

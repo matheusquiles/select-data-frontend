@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { TableContainer, Table, Th, Td, Tr, Checkbox } from '../styles/TableComponentStyles.jsx';
+import { useSelector, useDispatch } from 'react-redux';
+import { setSelectedPedidos } from '../redux/reducers/formSlice';
+import { TableContainer, Table, Th, Td, Tr, Checkbox, LoadingOverlay, DisabledTable } from '../styles/TableComponentStyles.jsx';
 
-const TableComponent = ({ data, columns }) => {
-  const [selectedIndices, setSelectedIndices] = useState([]);
+const TableComponent = ({ data, columns, isLoading }) => {
+  const dispatch = useDispatch();
+  const selectedPedidos = useSelector((state) => state.form.selectedPedidos);
   const [sortConfig, setSortConfig] = useState({ key: columns?.[0]?.key || '', direction: 'ascending' });
 
-  const handleRowClick = (index) => {
-    setSelectedIndices((prevSelectedIndices) => {
-      if (prevSelectedIndices.includes(index)) {
-        return prevSelectedIndices.filter((i) => i !== index);
-      } else {
-        return [...prevSelectedIndices, index];
-      }
-    });
+  const handleRowClick = (index, row) => {
+    const updatedSelectedPedidos = selectedPedidos.includes(row.id)
+      ? selectedPedidos.filter((id) => id !== row.id)
+      : [...selectedPedidos, row.id];
+    dispatch(setSelectedPedidos(updatedSelectedPedidos));
   };
 
   const handleSort = (key) => {
@@ -36,42 +36,49 @@ const TableComponent = ({ data, columns }) => {
 
   return (
     <TableContainer>
-      <Table>
-        <thead>
-          <tr>
-            <Th width="50px"></Th> {/* Coluna para o checkbox de seleção */}
-            {columns?.map((column, index) => (
-              <Th
-                key={index}
-                width={column.width}
-                onClick={() => handleSort(column.key)}
-              >
-                {column.title}
-              </Th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {sortedData.map((row, index) => (
-            <Tr
-              key={index}
-              className={selectedIndices.includes(index) ? 'selected' : ''}
-            >
-              <Td width="50px">
-                <Checkbox
-                  checked={selectedIndices.includes(index)}
-                  onChange={() => handleRowClick(index)}
-                />
-              </Td>
-              {columns?.map((column, colIndex) => (
-                <Td key={colIndex} width={column.width}>
-                  {row[column.key]}
-                </Td>
+      {isLoading && (
+        <LoadingOverlay>
+          <div>Carregando...</div>
+        </LoadingOverlay>
+      )}
+      <DisabledTable style={{ pointerEvents: isLoading ? 'none' : 'auto', opacity: isLoading ? 0.5 : 1 }}>
+        <Table>
+          <thead>
+            <tr>
+              <Th width="50px"></Th> {/* Coluna para o checkbox de seleção */}
+              {columns?.map((column, index) => (
+                <Th
+                  key={index}
+                  width={column.width}
+                  onClick={() => handleSort(column.key)}
+                >
+                  {column.title}
+                </Th>
               ))}
-            </Tr>
-          ))}
-        </tbody>
-      </Table>
+            </tr>
+          </thead>
+          <tbody>
+            {sortedData.map((row, index) => (
+              <Tr
+                key={index}
+                className={selectedPedidos.includes(row.id) ? 'selected' : ''}
+              >
+                <Td width="50px">
+                  <Checkbox
+                    checked={selectedPedidos.includes(row.id)}
+                    onChange={() => handleRowClick(index, row)}
+                  />
+                </Td>
+                {columns?.map((column, colIndex) => (
+                  <Td key={colIndex} width={column.width}>
+                    {row[column.key]}
+                  </Td>
+                ))}
+              </Tr>
+            ))}
+          </tbody>
+        </Table>
+      </DisabledTable>
     </TableContainer>
   );
 };
@@ -85,6 +92,6 @@ TableComponent.propTypes = {
       width: PropTypes.string,
     })
   ).isRequired,
+  isLoading: PropTypes.bool.isRequired,
 };
-
 export default TableComponent;

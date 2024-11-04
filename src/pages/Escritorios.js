@@ -2,38 +2,84 @@ import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { setErrorMessage, setFormData, setIsValidResponse, setSelectedPedidos, resetForm, setEditing, setLoading, setUpdating } from '../redux/reducers/formSlice.js';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import Input from '../components/input.js';
-import * as F from '../styles/formulario.jsx';
-import EstadoCidadeInput from '../components/cidadeEstado.js';
-import LookupRest from '../components/lookupRest.js';
-import { Divider } from '@mui/material';
-import { API_SEARCH_URL } from '../helpers/constants.js';
-import { API_UPDATE_URL } from '../helpers/constants.js';
 
+import * as F from '../styles/formulario.jsx';
+import LookupRest from '../components/lookupRest.js';
+import { API_BASE_URL } from '../helpers/constants.js';
+import TableComponent from '../components/tableComponent.js';
+
+import { Divider } from '@mui/material';
 import { CssVarsProvider } from '@mui/joy/styles';
 import CssBaseline from '@mui/joy/CssBaseline';
 import Box from '@mui/joy/Box';
 import Breadcrumbs from '@mui/joy/Breadcrumbs';
 import Typography from '@mui/joy/Typography';
-
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
-import TableComponent from '../components/tableComponent.js';
+import CircularProgress from '@mui/joy/CircularProgress';
 
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
-const data = [
-    { indice: 1, codigo: 'A001', descricao: 'Descrição 1' },
-    { indice: 2, codigo: 'A002', descricao: 'Descrição 2' },
-    { indice: 3, codigo: 'A003', descricao: 'Descrição 3' },
-];
-
-const columns = [
-    { title: '#', key: 'indice', width: '8px' },
-    { title: 'Código', key: 'codigo', width: '32px' },
-    { title: 'Descrição', key: 'descricao', width: '600px' },
-  ];
+const Alert = React.forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const Escritorios = () => {
+
+    const dispatch = useDispatch();
+    const [data, setData] = useState([]);
+    const isLoading = useSelector((state) => state.form.isLoading);
+    const [searchValue, setSearchValue] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+    const [open, setOpen] = useState(false);
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpen(false);
+    };
+
+    const handleSearch = useCallback(async (searchValue) => {
+        dispatch(setLoading(true));
+        try {
+            const endpoint = searchValue ? `${API_BASE_URL}/escritorio/${searchValue}` : `${API_BASE_URL}/escritorio`;
+            const response = await axios.get(endpoint);
+            await new Promise((resolve) => setTimeout(resolve, 2000));
+
+            console.log('data', response.data);
+            if (!response.data || (Array.isArray(response.data) && response.data.length === 0)) {
+                setErrorMessage('Nenhum resultado encontrado.');
+                setOpen(true);
+                setData([]);
+            } else {
+                const transformedData = transformData(response.data);
+                setErrorMessage('');
+                setData(transformedData);
+            }
+        } catch (error) {
+            setErrorMessage('Erro ao buscar dados.');
+        } finally {
+            dispatch(setLoading(false));
+        }
+    }, [dispatch]);
+
+    const transformData = (data) => {
+        const dataArray = Array.isArray(data) ? data : [data];
+        return dataArray.map((item, index) => ({
+            indice: index + 1,
+            codigo: item.idEscritorio,
+            descricao: item.nomeEscritorio,
+        }));
+    };
+
+    const columns = [
+        { title: '#', key: 'indice', width: '8px' },
+        { title: 'Código', key: 'codigo', width: '32px' },
+        { title: 'Descrição', key: 'descricao', width: '600px' },
+    ];
+
 
     return (
         <form onSubmit={(e) => e.preventDefault()} style={{ height: '100%', width: '100%' }}>
@@ -90,17 +136,45 @@ const Escritorios = () => {
                                 Escritórios
                             </Typography>
                         </Box>
+                        <F.InputLine>
+                            <LookupRest
+                                value={searchValue}
+                                first
+                                onChange={setSearchValue}
+                                onSearch={() => handleSearch(searchValue)}
+                            />
+
+
+                            {isLoading && <CircularProgress sx={{
+                                size: 'sm',
+                                gap: 2,
+                                mt: 2,
+                                mb: 1,
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                justifyContent: 'flex-end'
+                            }} />}
+
+                        </F.InputLine>
+
                     </Box>
                 </Box >
-                
+
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 10, p: 2 }}>
 
-                <Divider sx={{ mt: 3 }} />
-                <TableComponent data={data} columns={columns}/>
+                    <Divider sx={{ mt: 10 }} />
+                    <TableComponent data={data} columns={columns} isLoading={isLoading} />
 
-                </Box> 
-
+                </Box>
             </CssVarsProvider>
+            <Snackbar open={open}
+                autoHideDuration={6000}
+                onClose={handleClose}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
+                <Alert onClose={handleClose} severity="error">
+                    {errorMessage}
+                </Alert>
+            </Snackbar>
         </form>
     );
 };
