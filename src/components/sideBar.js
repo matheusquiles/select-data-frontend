@@ -16,14 +16,16 @@ import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded';
 import AssignmentRoundedIcon from '@mui/icons-material/AssignmentRounded';
 import GroupRoundedIcon from '@mui/icons-material/GroupRounded';
+import HandymanIcon from '@mui/icons-material/Handyman';
 import SupportRoundedIcon from '@mui/icons-material/SupportRounded';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import ColorSchemeToggle from '../styles/ColorSchemeToggle';
 import { closeSidebar } from './utils';
-import CadastroProcesso from '../CadastroProcesso';
-import Processos from '../Processos';
+import CadastroProcesso from '../pages/CadastroProcesso';
+import Processos from '../pages/Processos';
+import Escritorios from '../pages/Escritorios';
 
 function Toggler({ defaultExpanded = false, renderToggle, children }) {
     const [open, setOpen] = React.useState(defaultExpanded);
@@ -58,7 +60,7 @@ export default function Sidebar({ setActiveComponent }) {
         <Sheet
             className="Sidebar"
             sx={{
-                position: 'fixed', 
+                position: 'fixed',
                 transform: {
                     xs: 'translateX(calc(100% * (var(--SideNavigation-slideIn, 0) - 1)))',
                     md: 'none',
@@ -109,7 +111,7 @@ export default function Sidebar({ setActiveComponent }) {
             <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
                 <Typography
                     level="body-lg"
-                    sx={{ flex: '1', minWidth: '100px', maxWidth: '200px', fontSize: '28px', fontWeight: 'bold'}}>
+                    sx={{ flex: '1', minWidth: '100px', maxWidth: '200px', fontSize: '28px', fontWeight: 'bold' }}>
                     Select Data
                 </Typography>
                 <ColorSchemeToggle sx={{ ml: 'auto' }} />
@@ -137,9 +139,9 @@ export default function Sidebar({ setActiveComponent }) {
                 >
                     <ListItem>
                         <ListItemButton>
-                            <HomeRoundedIcon sx={{ fontSize: '24px', color: 'primary.main' }}/>
+                            <HomeRoundedIcon sx={{ fontSize: '24px', color: 'primary.main' }} />
                             <ListItemContent>
-                                <Typography level="title-sm" sx={{fontSize: '18px'}}
+                                <Typography level="title-sm" sx={{ fontSize: '18px' }}
                                 >Início </Typography>
                             </ListItemContent>
                         </ListItemButton>
@@ -147,9 +149,9 @@ export default function Sidebar({ setActiveComponent }) {
 
                     <ListItem>
                         <ListItemButton>
-                            <DashboardRoundedIcon sx={{ fontSize: '24px', color: 'primary.main' }}/>
+                            <DashboardRoundedIcon sx={{ fontSize: '24px', color: 'primary.main' }} />
                             <ListItemContent>
-                                <Typography level="title-sm" sx={{fontSize: '18px'}}>
+                                <Typography level="title-sm" sx={{ fontSize: '18px' }}>
                                     Dashboard</Typography>
                             </ListItemContent>
                         </ListItemButton>
@@ -159,9 +161,9 @@ export default function Sidebar({ setActiveComponent }) {
                         <Toggler
                             renderToggle={({ open, setOpen }) => (
                                 <ListItemButton onClick={() => setOpen(!open)}>
-                                    <AssignmentRoundedIcon sx={{ fontSize: '24px', color: 'primary.main' }}/>
+                                    <AssignmentRoundedIcon sx={{ fontSize: '24px', color: 'primary.main' }} />
                                     <ListItemContent>
-                                        <Typography level="title-sm" sx={{fontSize: '18px'}}>
+                                        <Typography level="title-sm" sx={{ fontSize: '18px' }}>
                                             Processos</Typography>
                                     </ListItemContent>
                                     <KeyboardArrowDownIcon
@@ -171,8 +173,8 @@ export default function Sidebar({ setActiveComponent }) {
                             )}
                         >
                             <List sx={{ gap: 0.5, fontSize: '16px' }}>
-                                <ListItem sx={{ mt: 0.5}}>
-                                    <ListItemButton onClick={() => handleMenuClick(<CadastroProcesso />) } >
+                                <ListItem sx={{ mt: 0.5 }}>
+                                    <ListItemButton onClick={() => handleMenuClick(<CadastroProcesso />)} >
                                         Novo Processo
                                     </ListItemButton>
                                 </ListItem>
@@ -186,9 +188,9 @@ export default function Sidebar({ setActiveComponent }) {
                         <Toggler
                             renderToggle={({ open, setOpen }) => (
                                 <ListItemButton onClick={() => setOpen(!open)}>
-                                    <GroupRoundedIcon sx={{ fontSize: '24px', color: 'primary.main' }}/>
+                                    <GroupRoundedIcon sx={{ fontSize: '24px', color: 'primary.main' }} />
                                     <ListItemContent>
-                                        <Typography level="title-sm" sx={{fontSize: '18px'}}>
+                                        <Typography level="title-sm" sx={{ fontSize: '18px' }}>
                                             Usuários</Typography>
                                     </ListItemContent>
                                     <KeyboardArrowDownIcon
@@ -210,7 +212,6 @@ export default function Sidebar({ setActiveComponent }) {
                                     <ListItemButton
                                         role="menuitem"
                                         component="a"
-                                        href="/joy-ui/getting-started/templates/profile-dashboard/"
                                     >
                                         Meu Perfil
                                     </ListItemButton>
@@ -224,6 +225,57 @@ export default function Sidebar({ setActiveComponent }) {
                             </List>
                         </Toggler>
                     </ListItem>
+
+                    <ListItem nested>
+                        <Toggler
+                            renderToggle={({ open, setOpen }) => (
+                                <ListItemButton onClick={() => setOpen(!open)}>
+                                    <HandymanIcon sx={{ fontSize: '24px', color: 'primary.main' }} />
+                                    <ListItemContent>
+                                        <Typography level="title-sm" sx={{ fontSize: '18px' }}>
+                                            Manutenção</Typography>
+                                    </ListItemContent>
+                                    <KeyboardArrowDownIcon
+                                        sx={[
+                                            open
+                                                ? {
+                                                    transform: 'rotate(180deg)',
+                                                }
+                                                : {
+                                                    transform: 'none',
+                                                },
+                                        ]}
+                                    />
+                                </ListItemButton>
+                            )}
+                        >
+                            <List sx={{ gap: 0.5, fontSize: '16px' }}>
+                                <ListItem sx={{ mt: 0.5 }}>
+                                <ListItemButton onClick={() => handleMenuClick(<Escritorios />)} > Escritório </ListItemButton>
+                                </ListItem>
+                                <ListItem>
+                                    <ListItemButton>Fase Processual</ListItemButton>
+                                </ListItem>
+                                <ListItem>
+                                    <ListItemButton>Função</ListItemButton>
+                                </ListItem>
+                                <ListItem>
+                                    <ListItemButton>Natureza</ListItemButton>
+                                </ListItem>
+                                <ListItem>
+                                    <ListItemButton>Tipo de Ação</ListItemButton>
+                                </ListItem>
+                                <ListItem>
+                                    <ListItemButton>Tribunal Origem</ListItemButton>
+                                </ListItem>
+                                <ListItem>
+                                    <ListItemButton>Tipos de Pedido</ListItemButton>
+                                </ListItem>
+                            </List>
+                        </Toggler>
+                    </ListItem>
+
+
                 </List>
                 <List
                     size="sm"
@@ -235,13 +287,13 @@ export default function Sidebar({ setActiveComponent }) {
                         mb: 0,
                     }}
                 >
-                    <ListItem sx={{fontSize: '16px'}}> 
+                    <ListItem sx={{ fontSize: '16px' }}>
                         <ListItemButton>
                             <SupportRoundedIcon />
                             Ajuda
                         </ListItemButton>
                     </ListItem>
-                    <ListItem sx={{fontSize: '16px'}}>
+                    <ListItem sx={{ fontSize: '16px' }}>
                         <ListItemButton>
                             <SettingsRoundedIcon />
                             Configurações
@@ -257,15 +309,15 @@ export default function Sidebar({ setActiveComponent }) {
                     src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=286"
                 />
                 <Box sx={{ minWidth: 0, flex: 1 }}>
-                    <Typography level="title-sm" sx={{fontSize: '18px'}}>Tiago Fittarelli</Typography>
-                    <Typography level="body-xs" sx={{fontSize: '14px'}}>tfitarelli@test.com</Typography>
+                    <Typography level="title-sm" sx={{ fontSize: '18px' }}>Tiago Fittarelli</Typography>
+                    <Typography level="body-xs" sx={{ fontSize: '14px' }}>tfitarelli@test.com</Typography>
                 </Box>
                 <IconButton
                     size="lg"
                     variant="plain"
                     color="neutral"
                     sx={{ width: '20px', height: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    <LogoutRoundedIcon sx={{ flex: '1', minWidth: '20px', maxWidth: '20px' }}/>
+                    <LogoutRoundedIcon sx={{ flex: '1', minWidth: '20px', maxWidth: '20px' }} />
                 </IconButton>
             </Box>
         </Sheet>

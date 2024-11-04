@@ -13,7 +13,7 @@ const Frame = () => {
     <F.FrameWrapper>
       <CssVarsProvider disableTransitionOnChange>
         <CssBaseline />
-        <Box sx={{ display: 'flex', minHeight: '120dvh' }}>
+        <Box sx={{ display: 'flex', minHeight: '100dvh' }}>
           <Header />
           <Sidebar setActiveComponent={setActiveComponent} /> 
         </Box>

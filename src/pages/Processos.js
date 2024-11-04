@@ -1,18 +1,17 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
-import { setErrorMessage, setFormData, setIsValidResponse, setSelectedPedidos, resetForm, setEditing, setLoading, setUpdating } from './redux/reducers/formSlice';
+import { setErrorMessage, setFormData, setIsValidResponse, setSelectedPedidos, resetForm, setEditing, setLoading, setUpdating } from '../redux/reducers/formSlice.js';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import Input from './components/input.js';
-import SelectRest from './components/selectRest.js';
-import DateImput from './components/date.js';
-import MoneyImput from './components/money.js';
-import * as F from './styles/formulario.jsx';
-import EstadoCidadeInput from './components/cidadeEstado.js';
-import LookupRest from './components/lookupRest.js';
+import Input from '../components/input.js';
+import SelectRest from '../components/selectRest.js';
+import DateImput from '../components/date.js';
+import MoneyImput from '../components/money.js';
+import * as F from '../styles/formulario.jsx';
+import EstadoCidadeInput from '../components/cidadeEstado.js';
+import LookupRest from '../components/lookupRest.js';
 import { Divider } from '@mui/material';
-import { API_SEARCH_URL } from './helpers/constants.js';
-import { API_UPDATE_URL } from './helpers/constants.js';
-import camelCase from './helpers/camelCase.js';
+import { API_SEARCH_URL } from '../helpers/constants.js';
+import { API_UPDATE_URL } from '../helpers/constants.js';
 
 import { CssVarsProvider } from '@mui/joy/styles';
 import CssBaseline from '@mui/joy/CssBaseline';
@@ -25,7 +24,7 @@ import CircularProgress from '@mui/joy/CircularProgress';
 
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
-import PedidoManager from './components/PedidoManger.js';
+import PedidoManager from '../components/PedidoManger.js';
 
 const ConsultarProcesso = () => {
     const dispatch = useDispatch();

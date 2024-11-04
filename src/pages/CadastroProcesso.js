@@ -1,18 +1,17 @@
 
 import React, { useEffect } from 'react';
-import { setLoading, setFormData, setInvalidFields, setSelectedPedidos, resetForm, setUpdating } from './redux/reducers/formSlice';
+import { setFormData, setInvalidFields, setSelectedPedidos, resetForm, setUpdating } from '../redux/reducers/formSlice.js';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-import Input from './components/input.js';
-import SelectRest from './components/selectRest.js';
-import DateImput from './components/date.js';
-import MoneyImput from './components/money.js';
-import * as F from './styles/formulario.jsx';
-import EstadoCidadeInput from './components/cidadeEstado.js';
-import MultiSelectRest from './components/multiSelectRest.js';
-import { API_BASE_URL } from './helpers/constants.js';
-import { API_SAVE_URL } from './helpers/constants.js';
-import camelCase from './helpers/camelCase.js';
+import Input from '../components/input.js';
+import SelectRest from '../components/selectRest.js';
+import DateImput from '../components/date.js';
+import MoneyImput from '../components/money.js';
+import * as F from '../styles/formulario.jsx';
+import EstadoCidadeInput from '../components/cidadeEstado.js';
+import MultiSelectRest from '../components/multiSelectRest.js';
+import { API_SAVE_URL } from '../helpers/constants.js';
+import camelCase from '../helpers/camelCase.js';
 
 import { CssVarsProvider } from '@mui/joy/styles';
 import CssBaseline from '@mui/joy/CssBaseline';
