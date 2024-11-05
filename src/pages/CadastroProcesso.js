@@ -1,6 +1,6 @@
 
 import React, { useEffect } from 'react';
-import { setFormData, setInvalidFields, setSelectedPedidos, resetForm, setUpdating } from '../redux/reducers/formSlice.js';
+import { setFormData, setInvalidFields, setSelectedPedidos, resetForm, setUpdating, setNotification } from '../redux/reducers/formSlice.js';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import Input from '../components/input.js';
@@ -24,6 +24,7 @@ import Button from '@mui/joy/Button';
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 import CircularProgress from '@mui/joy/CircularProgress';
+import NotificationSnackbar from '../components/NotificacaoSnackbar.js';
 
 const CadastroProcesso = () => {
   const dispatch = useDispatch();
@@ -31,11 +32,10 @@ const CadastroProcesso = () => {
   const formData = useSelector((state) => state.form.formData);
   const invalidFields = useSelector((state) => state.form.invalidFields);
   const selectedPedidos = useSelector((state) => state.form.selectedPedidos);
-  const errorMessage = useSelector((state) => state.form.errorMessage);
-  const isLoading = useSelector((state) => state.form.isLoading);
   const isUpdating = useSelector((state) => state.form.isUpdating);
 
   useEffect(() => {
+    dispatch(setNotification({ message: '', severity: 'info' }));
     dispatch(resetForm());
   }, [dispatch]);
 
@@ -49,11 +49,9 @@ const CadastroProcesso = () => {
   };
 
   const handleMultiSelectChange = (selectedItems) => {
-
     if (!Array.isArray(selectedItems)) {
       selectedItems = [];
     }
-
     const mappedItems = selectedItems.map(item => ({
       tipoPedido: item.id
     }));
@@ -75,7 +73,7 @@ const CadastroProcesso = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     dispatch(setUpdating(true));
-    
+
     if (validateFields()) {
       try {
         const camelCaseFormData = camelCase.convertKeysToCamelCase(formData);
@@ -89,26 +87,25 @@ const CadastroProcesso = () => {
         await new Promise((resolve) => setTimeout(resolve, 3000));
 
         if (response.data === true) {
-          alert('Processo criado com sucesso!');
+          dispatch(setNotification({ message: 'Processo criado com sucesso!', severity: 'success' }));
         } else {
-          alert('Já existe um processo com esse número.');
+          dispatch(setNotification({ message: 'Já existe um processo com esse número.', severity: 'error' }));
         }
 
       } catch (error) {
-        console.error('Erro ao criar o processo:', error);
-
         if (error.response) {
-          alert(`Erro ao criar o processo: ${error.response.data.message || 'Erro desconhecido'}`);
+          const msg = !error.response.data.message ? 'Erro desconhecido' : 'Erro ao criar processo' + error.response.data.message;
+          dispatch(setNotification({ message: msg, severity: 'error' }));
         } else if (error.request) {
-          alert('Erro: Nenhuma resposta recebida do servidor.');
+          dispatch(setNotification({ message: 'Erro: Nenhuma resposta recebida do servidor', severity: 'error' }));
         } else {
-          alert(`Erro ao configurar a requisição: ${error.message}`);
+          dispatch(setNotification({ message: 'Erro ao configurar a requisição: ' + error.message, severity: 'error' }));
         }
       } finally {
         dispatch(setUpdating(false));
       }
     } else {
-      alert('Por favor, preencha todos os campos obrigatórios.');
+      dispatch(setNotification({ message: 'Por favor, preencha todos os campos obrigatórios.', severity: 'warning' }));
       dispatch(setUpdating(false));
     }
   };
@@ -455,7 +452,7 @@ const CadastroProcesso = () => {
               mb: 1,
               width: '100%',
               paddingBottom: '30px',
-              overflow: 'visible', 
+              overflow: 'visible',
               flexDirection: 'row',
               alignItems: 'flex-start',
               justifyContent: 'flex-end'
@@ -468,10 +465,7 @@ const CadastroProcesso = () => {
           </F.InputLine>
 
         </CssVarsProvider>
-
-
-        {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>} {/* Exibir mensagem de erro */}
-
+        <NotificationSnackbar />
 
       </form >
     </>

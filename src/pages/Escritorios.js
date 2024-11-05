@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
-import { setErrorMessage, setFormData, setIsValidResponse, setSelectedPedidos, resetForm, setEditing, setLoading, setUpdating } from '../redux/reducers/formSlice.js';
-import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import { setNotification,  setLoading } from '../redux/reducers/formSlice.js';
+import { useDispatch, useSelector } from 'react-redux';
 
 import * as F from '../styles/formulario.jsx';
 import LookupRest from '../components/lookupRest.js';
@@ -17,13 +17,8 @@ import Typography from '@mui/joy/Typography';
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 import CircularProgress from '@mui/joy/CircularProgress';
+import NotificationSnackbar from '../components/NotificacaoSnackbar.js';
 
-import Snackbar from '@mui/material/Snackbar';
-import MuiAlert from '@mui/material/Alert';
-
-const Alert = React.forwardRef(function Alert(props, ref) {
-    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
 
 const Escritorios = () => {
 
@@ -31,15 +26,7 @@ const Escritorios = () => {
     const [data, setData] = useState([]);
     const isLoading = useSelector((state) => state.form.isLoading);
     const [searchValue, setSearchValue] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
-    const [open, setOpen] = useState(false);
 
-    const handleClose = (event, reason) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-        setOpen(false);
-    };
 
     const handleSearch = useCallback(async (searchValue) => {
         dispatch(setLoading(true));
@@ -50,16 +37,15 @@ const Escritorios = () => {
 
             console.log('data', response.data);
             if (!response.data || (Array.isArray(response.data) && response.data.length === 0)) {
-                setErrorMessage('Nenhum resultado encontrado.');
-                setOpen(true);
+                dispatch(setNotification({message: 'Nenhum resultado encontrado.', severity: 'error'}));
                 setData([]);
             } else {
                 const transformedData = transformData(response.data);
-                setErrorMessage('');
+                dispatch(setNotification({message: '', severity: 'info'}));
                 setData(transformedData);
             }
         } catch (error) {
-            setErrorMessage('Erro ao buscar dados.');
+            dispatch(setNotification({message: 'Erro ao buscar dados', severity: 'error'}));
         } finally {
             dispatch(setLoading(false));
         }
@@ -73,6 +59,10 @@ const Escritorios = () => {
             descricao: item.nomeEscritorio,
         }));
     };
+
+    useEffect(() => {
+        dispatch(setNotification({message: '', severity: 'info'}));
+    }, [dispatch]);
 
     const columns = [
         { title: '#', key: 'indice', width: '8px' },
@@ -167,14 +157,8 @@ const Escritorios = () => {
 
                 </Box>
             </CssVarsProvider>
-            <Snackbar open={open}
-                autoHideDuration={6000}
-                onClose={handleClose}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
-                <Alert onClose={handleClose} severity="error">
-                    {errorMessage}
-                </Alert>
-            </Snackbar>
+            <NotificationSnackbar />
+
         </form>
     );
 };

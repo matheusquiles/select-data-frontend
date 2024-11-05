@@ -10,6 +10,7 @@ const initialState = {
   isUpdating: false,
   estadoSelecionado: '',
   cidadeSelecionada: '',
+  notification: { message: '', severity: 'info' },
 };
 
 const formSlice = createSlice({
@@ -25,6 +26,12 @@ const formSlice = createSlice({
     setFormData: (state, action) => {
       const newData = action.payload.formData ? action.payload.formData : action.payload;
       state.formData = { ...state.formData, ...newData };
+    },
+    setNotification: (state, action) => {
+      state.notification = action.payload;
+    },
+    clearNotification: (state) => {
+      state.notification = { message: '', severity: 'info' };
     },
     addPedido: (state, action) => {
       const newPedido = action.payload;
@@ -97,5 +104,7 @@ export const {
   setUpdating,
   setEstadoSelecionado,
   setCidadeSelecionada,
+  setNotification,
+  clearNotification,
 } = formSlice.actions;
 export default formSlice.reducer;

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
-import { setErrorMessage, setFormData, setIsValidResponse, setSelectedPedidos, resetForm, setEditing, setLoading, setUpdating } from '../redux/reducers/formSlice.js';
+import { setNotification, setFormData, setIsValidResponse, resetForm, setEditing, setLoading, setUpdating } from '../redux/reducers/formSlice.js';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import Input from '../components/input.js';
 import SelectRest from '../components/selectRest.js';
@@ -12,6 +12,7 @@ import LookupRest from '../components/lookupRest.js';
 import { Divider } from '@mui/material';
 import { API_SEARCH_URL } from '../helpers/constants.js';
 import { API_UPDATE_URL } from '../helpers/constants.js';
+import PedidoManager from '../components/PedidoManger.js';
 
 import { CssVarsProvider } from '@mui/joy/styles';
 import CssBaseline from '@mui/joy/CssBaseline';
@@ -24,7 +25,7 @@ import CircularProgress from '@mui/joy/CircularProgress';
 
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
-import PedidoManager from '../components/PedidoManger.js';
+import NotificationSnackbar from '../components/NotificacaoSnackbar.js';
 
 const ConsultarProcesso = () => {
     const dispatch = useDispatch();
@@ -67,7 +68,7 @@ const ConsultarProcesso = () => {
 
     const handleEditClick = useCallback(() => {
         if (!formData.numeroProcesso) {
-            alert('Por favor, busque um processo antes de editar.');
+            dispatch(setNotification({ message: 'Por favor, busque um processo antes de editar.', severity: 'warning' }));
             return;
         } else {
             dispatch(setEditing(true));
@@ -83,31 +84,29 @@ const ConsultarProcesso = () => {
             try {
                 // const camelCaseFormData = camelCase.convertKeysToCamelCase(formData);
                 const { pedidos, ...dataToSend } = formData;
-                console.log("Dados a serem enviados:", JSON.stringify(dataToSend, null, 2));
 
                 const response = await axios.put(`${API_UPDATE_URL}${searchValue}`, dataToSend);
                 await new Promise((resolve) => setTimeout(resolve, 3000));
 
                 if (response.data === true) {
-                    alert('Processo atualizado com sucesso!');
+                    dispatch(setNotification({ message: 'Processo atualizado com sucesso!', severity: 'success' }));
                 } else {
-                    alert('Erro ao atualizar processo.');
+                    dispatch(setNotification({ message: 'Erro ao atualizar processo.', severity: 'error' }));
                 }
             } catch (error) {
-                console.error('Erro ao criar o processo:', error);
                 if (error.response) {
-                    alert(`Erro ao criar o processo: ${error.response.data.message || 'Erro desconhecido'}`);
+                    const msg = !error.response.data.message ? 'Erro desconhecido' : 'Erro ao criar processo' + error.response.data.message;
+                    dispatch(setNotification({ message: msg, severity: 'error' }));
                 } else if (error.request) {
-                    alert('Erro: Nenhuma resposta recebida do servidor.');
+                    dispatch(setNotification({ message: 'Erro: Nenhuma resposta recebida do servidor', severity: 'error' }));
                 } else {
-                    alert(`Erro ao configurar a requisição: ${error.message}`);
+                    dispatch(setNotification({ message: 'Erro ao configurar a requisição: ' + error.message, severity: 'error' }));
                 }
             } finally {
                 dispatch(setUpdating(false));
-                // dispatch(validateFields(true))
             }
         } else {
-            alert('Por favor, preencha todos os campos obrigatórios.');
+            dispatch(setNotification({ message: 'Por favor, preencha todos os campos obrigatórios.', severity: 'warning' }));
             dispatch(setUpdating(false));
         }
     }, [dispatch, formData, searchValue]);
@@ -137,14 +136,13 @@ const ConsultarProcesso = () => {
                     })),
                 }));
                 dispatch(setIsValidResponse(true));
+                dispatch(setNotification({ message: '', severity: 'warning' }));
             } else {
-                alert('Processo não encontrado ou dados inválidos');
-                dispatch(setErrorMessage('Processo não encontrado ou dados inválidos.'));
+                dispatch(setNotification({ message: 'Processo não encontrado ou dados inválidos.', severity: 'error' }));
                 dispatch(setIsValidResponse(false));
             }
         } catch (error) {
-            console.error('Erro ao buscar dados:', error);
-            dispatch(setErrorMessage('Erro ao buscar dados.'));
+            dispatch(setNotification({ message: 'Processo não encontrado ou dados inválidos.', severity: 'error' }));
         } finally {
             dispatch(setLoading(false));
         }
@@ -507,7 +505,7 @@ const ConsultarProcesso = () => {
                                 />
                             </F.SmallInputLine>
 
-                                <Divider sx={{ mt: 3 }} />
+                            <Divider sx={{ mt: 3 }} />
                             <F.InputLine>
                                 <PedidoManager
                                     form={formData}
@@ -540,6 +538,8 @@ const ConsultarProcesso = () => {
                     </Box>
                 </Box>
             </CssVarsProvider>
+
+            <NotificationSnackbar />
         </form>
     );
 };
