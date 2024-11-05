@@ -10,6 +10,7 @@ const initialState = {
   isUpdating: false,
   estadoSelecionado: '',
   cidadeSelecionada: '',
+  notification: { message: '', severity: 'info' },
 };
 
 const formSlice = createSlice({
@@ -26,10 +27,12 @@ const formSlice = createSlice({
       const newData = action.payload.formData ? action.payload.formData : action.payload;
       state.formData = { ...state.formData, ...newData };
     },
-    // setOptions: (state, action) => {
-    //   const { route, options } = action.payload;
-    //   state.options[route] = options;
-    // },
+    setNotification: (state, action) => {
+      state.notification = action.payload;
+    },
+    clearNotification: (state) => {
+      state.notification = { message: '', severity: 'info' };
+    },
     addPedido: (state, action) => {
       const newPedido = action.payload;
       if (!state.selectedPedidos.some(p => p.id === newPedido.id)) {
@@ -49,17 +52,6 @@ const formSlice = createSlice({
         descricao: item.name,
       }));
     },
-
-    // setSelectedPedidos: (state, action) => {
-    //   state.selectedPedidos = action.payload.map(item => ({
-    //     idPedido: item.idPedido || null,
-    //     idTipoPedido: item.id,
-    //     descricao: item.name, // Verifique se `item.name` é correto conforme os dados da API
-    //   }));
-    //   state.formData.pedido = state.selectedPedidos;
-    // },
-
-
     setSelectedPedidos: (state, action) => {
       state.selectedPedidos = action.payload;
       state.formData.pedido = action.payload.map(item => ({
@@ -67,14 +59,10 @@ const formSlice = createSlice({
         descricao: item.descricao,
       }));
     },
-    // Atualização das opções (tipos de pedidos disponíveis)
     setOptions: (state, action) => {
       const { route, options } = action.payload;
       state.options[route] = options;
     },
-
-
-
     setInvalidFields: (state, action) => {
       state.invalidFields = action.payload;
     },
@@ -116,5 +104,7 @@ export const {
   setUpdating,
   setEstadoSelecionado,
   setCidadeSelecionada,
+  setNotification,
+  clearNotification,
 } = formSlice.actions;
 export default formSlice.reducer;
